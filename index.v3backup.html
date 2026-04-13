@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PIN">
+<meta name="theme-color" content="#0a0e1a">
+<title>PIN — Peptide Intelligence Network</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+--teal:#7ee8a2;--teal2:#52d68a;--teal3:#3ab574;--tl:rgba(126,232,162,0.1);--tld:rgba(126,232,162,0.05);
+--bg:#0f0e0c;--bg2:#181714;--bg3:#221f1b;--bg4:#2d2925;
+--text:#f5f0e8;--text2:#a89f94;--text3:#6b6259;
+--border:rgba(255,248,235,0.07);--border2:rgba(255,248,235,0.13);
+--red:#f28b7a;--amber:#e8b86d;--blue:#7ab4e8;--purple:#b39ddb;
+--r:12px;--rl:16px;--rxl:22px;
+--safeT:env(safe-area-inset-top,44px);--safeB:env(safe-area-inset-bottom,34px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'DM Sans',-apple-system,sans-serif;color:var(--text);font-size:15px;line-height:1.5}
+#app{height:100vh;display:flex;flex-direction:column}
+.sb{height:var(--safeT);background:var(--bg);flex-shrink:0}
+
+/* ONBOARDING */
+#onboard{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;overflow:hidden}
+.ob-progress{height:3px;background:var(--bg3);flex-shrink:0}
+.ob-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width 0.4s ease;border-radius:2px}
+.ob-screens{flex:1;overflow:hidden;position:relative}
+.ob-screen{position:absolute;inset:0;display:flex;flex-direction:column;padding:0 24px;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.4s ease}
+.ob-screen.active{transform:translateX(0);opacity:1}
+.ob-screen.left{transform:translateX(-100%);opacity:0}
+.ob-screen.right{transform:translateX(100%);opacity:0}
+.ob-logo{text-align:center;padding:20px 0 4px}
+.ob-logo-mark{font-size:40px;font-weight:900;letter-spacing:-3px;font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(160deg,#a8edbb,var(--teal),#7ee8a2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ob-logo-sub{font-size:11px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;font-weight:500}
+.ob-hero{font-size:28px;font-weight:900;letter-spacing:-1px;line-height:1.15;margin-bottom:10px;margin-top:16px;font-family:'Plus Jakarta Sans',sans-serif}
+.ob-hero span{color:var(--teal)}
+.ob-desc{font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:16px}
+.ob-question{font-size:21px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;margin-top:20px}
+.ob-hint{font-size:13px;color:var(--text2);margin-bottom:16px}
+.ob-options{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.ob-opt{background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--rl);padding:13px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s}
+.ob-opt:active{transform:scale(0.98)}
+.ob-opt.sel{border-color:var(--teal);background:var(--tl)}
+.ob-opt-icon{font-size:24px;width:40px;text-align:center;flex-shrink:0}
+.ob-opt-text{flex:1}
+.ob-opt-title{font-size:15px;font-weight:600}
+.ob-opt-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.ob-opt-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:all 0.2s}
+.ob-opt.sel .ob-opt-check{background:var(--teal);border-color:var(--teal)}
+.ob-multi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.ob-chip{background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--rl);padding:14px 12px;cursor:pointer;text-align:center;transition:all 0.2s}
+.ob-chip.sel{border-color:var(--teal);background:var(--tl)}
+.ob-chip:active{transform:scale(0.96)}
+.ob-chip-icon{font-size:26px;margin-bottom:6px}
+.ob-chip-label{font-size:13px;font-weight:600}
+.ob-nav{padding:16px 24px calc(20px + var(--safeB));display:flex;gap:12px;flex-shrink:0}
+.ob-btn-next{flex:1;background:linear-gradient(135deg,var(--teal),var(--teal2));color:#0f0e0c;padding:15px;border-radius:var(--r);font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',inherit;transition:opacity 0.15s}
+.ob-btn-next:active{opacity:0.8}
+.ob-btn-back{width:50px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.ob-age-input{font-size:56px;font-weight:900;color:var(--teal);text-align:center;width:100%;background:transparent;border:none;outline:none;margin:16px 0 4px;letter-spacing:-3px}
+.ob-age-label{text-align:center;font-size:13px;color:var(--text3);margin-bottom:24px}
+.ob-result{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-radius:var(--rxl);padding:22px;margin-bottom:16px;border:1px solid rgba(126,232,162,0.15)}
+.ob-result-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--teal);margin-bottom:12px}
+.ob-stack-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.ob-stack-item:last-child{border:none}
+.ob-stack-name{font-size:15px;font-weight:700;flex:1}
+.ob-stack-dose{font-size:12px;color:var(--text2)}
+.ob-stack-cat{font-size:10px;padding:3px 8px;border-radius:100px;font-weight:700}
+.ob-disclaimer{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:var(--r);padding:12px;font-size:12px;color:#fcd34d;margin-bottom:16px;line-height:1.6}
+
+/* SCREENS */
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;padding-bottom:calc(68px + var(--safeB))}
+#main-app{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.on{display:flex}
+
+/* TAB BAR */
+.tabbar{height:calc(56px + var(--safeB));padding-bottom:var(--safeB);background:rgba(15,14,12,0.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:0.5px solid var(--border2);display:flex;flex-shrink:0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding-top:6px;position:relative}
+.tab-ic{font-size:20px;transition:transform 0.2s}
+.tab.on .tab-ic{transform:scale(1.15)}
+.tab-lb{font-size:10px;font-weight:600;color:var(--text3);transition:color 0.15s}
+.tab.on .tab-lb{color:var(--teal)}
+.tab-dot{width:4px;height:4px;border-radius:50%;background:var(--teal);position:absolute;bottom:6px;opacity:0;transition:opacity 0.2s}
+.tab.on .tab-dot{opacity:1}
+
+/* HEADER */
+.hdr{padding:16px 18px 8px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hdr-left h1{font-size:26px;font-weight:800;letter-spacing:-0.5px;font-family:'Plus Jakarta Sans',sans-serif}
+.hdr-left p{font-size:13px;color:var(--text2);margin-top:1px}
+.hdr-btn{width:38px;height:38px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:0.5px solid var(--border2);font-size:18px;color:var(--text2);flex-shrink:0}
+.pad{padding:0 18px}
+
+/* CARDS */
+.card{background:var(--bg2);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:0.5px solid var(--border)}
+.card-accent{border-color:rgba(126,232,162,0.2);background:linear-gradient(135deg,var(--bg2),var(--bg3))}
+.clbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--text3);margin-bottom:10px}
+.shead{display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px}
+.shead h2{font-size:17px;font-weight:800;letter-spacing:-0.2px;font-family:'Plus Jakarta Sans',sans-serif}
+.shead-a{font-size:14px;color:var(--teal);font-weight:600;cursor:pointer}
+
+/* BUTTONS */
+.btn{padding:13px 18px;border-radius:var(--r);font-size:15px;font-weight:600;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;width:100%;transition:all 0.15s}
+.btn:active{transform:scale(0.97)}
+.btn-p{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#0f0e0c;margin-bottom:8px;font-weight:600}
+.btn-o{background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:10px;width:auto}
+.btn-danger{background:rgba(239,68,68,0.15);color:#f87171;border:0.5px solid rgba(239,68,68,0.2)}
+
+/* INPUTS */
+input,select,textarea{width:100%;padding:12px 14px;font-size:15px;font-family:inherit;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);outline:none;-webkit-appearance:none;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--teal)}
+input::placeholder{color:var(--text3)}
+textarea{resize:none;min-height:80px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BADGE */
+.badge{display:inline-flex;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px}
+.bg{background:rgba(126,232,162,0.1);color:var(--teal);border:1px solid rgba(126,232,162,0.18)}
+.ba{background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.25)}
+.br{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.25)}
+.bb{background:rgba(59,130,246,0.15);color:#93c5fd;border:1px solid rgba(59,130,246,0.25)}
+.bp{background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25)}
+
+/* SHEETS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:flex-end}
+.overlay.on{display:flex}
+.sheet{background:var(--bg2);border-radius:26px 26px 0 0;padding:20px 20px calc(20px + var(--safeB));width:100%;max-height:90vh;overflow-y:auto;border-top:0.5px solid var(--border2)}
+.sh-hdl{width:36px;height:4px;border-radius:2px;background:var(--bg4);margin:0 auto 18px}
+.sh-title{font-size:20px;font-weight:800;letter-spacing:-0.4px;margin-bottom:18px}
+
+/* TRACKING */
+.dose-item{background:var(--bg2);border-radius:var(--rl);padding:14px 15px;margin-bottom:9px;display:flex;gap:12px;align-items:center;border:0.5px solid var(--border);transition:all 0.2s}
+.dose-item.done{opacity:0.4}
+.dose-check{width:40px;height:40px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;background:var(--bg3);transition:all 0.2s;font-size:16px;color:transparent}
+.dose-check.ck{background:var(--teal);border-color:var(--teal);color:#000}
+.dose-check:active{transform:scale(0.88)}
+.dose-body{flex:1;min-width:0}
+.dose-name{font-size:15px;font-weight:700}
+.dose-meta{font-size:12px;color:var(--text2);margin-top:2px}
+.dose-time{font-size:11px;color:var(--text3);margin-top:3px}
+.dose-time.due{color:var(--teal)}
+.dose-time.late{color:#f87171}
+
+/* HERO TODAY */
+.today-hero{background:linear-gradient(145deg,var(--bg3) 0%,var(--bg2) 100%);border-radius:var(--rxl);padding:22px;margin-bottom:14px;border:0.5px solid rgba(126,232,162,0.12);position:relative;overflow:hidden}
+.today-hero::after{content:'';position:absolute;top:-60px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(126,232,162,0.07),transparent 70%)}
+.today-greet{font-size:13px;color:var(--text3);margin-bottom:4px}
+.today-date{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:16px}
+.today-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.today-stat{background:rgba(255,255,255,0.04);border-radius:var(--r);padding:10px;text-align:center}
+.today-stat-n{font-size:24px;font-weight:800;color:var(--teal);letter-spacing:-1px;font-family:'Plus Jakarta Sans',sans-serif}
+.today-stat-l{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* STREAK */
+.streak-row{background:var(--bg2);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;border:0.5px solid rgba(245,158,11,0.2)}
+.streak-n{font-size:34px;font-weight:900;color:var(--amber);letter-spacing:-2px;line-height:1;font-family:'Plus Jakarta Sans',sans-serif}
+.streak-dots{display:flex;gap:4px;margin-top:6px}
+.streak-dot{width:8px;height:8px;border-radius:50%;background:var(--bg4)}
+.streak-dot.on{background:#f59e0b}
+
+/* CHART */
+.chart-wrap{height:120px;display:flex;align-items:flex-end;gap:5px;padding:0 4px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar-outer{width:100%;background:var(--bg4);border-radius:6px;overflow:hidden;flex:1;position:relative;min-height:4px}
+.chart-bar-inner{width:100%;background:linear-gradient(to top,var(--teal2),var(--teal));border-radius:6px;position:absolute;bottom:0;transition:height 0.6s ease}
+.chart-lbl{font-size:9px;color:var(--text3);font-weight:600}
+
+/* STACKING */
+.stack-card{background:var(--bg2);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:0.5px solid var(--border);cursor:pointer;transition:all 0.2s}
+.stack-card:active{transform:scale(0.99);border-color:var(--teal)}
+.stack-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.stack-name{font-size:16px;font-weight:700}
+.stack-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.stack-peptides{font-size:12px;color:var(--text2);line-height:1.5}
+.stack-meta{display:flex;gap:12px;margin-top:10px;font-size:12px;color:var(--text3)}
+
+/* RESEARCH */
+.pep-card{background:var(--bg2);border-radius:var(--rl);padding:15px;margin-bottom:9px;display:flex;gap:13px;align-items:center;border:0.5px solid var(--border);cursor:pointer;transition:border-color 0.15s}
+.pep-card:active{border-color:var(--teal)}
+.pep-icon{width:44px;height:44px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pep-body{flex:1;min-width:0}
+.pep-name{font-size:15px;font-weight:700}
+.pep-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.pep-bars{display:flex;gap:6px;margin-top:6px}
+.pep-bar-wrap{flex:1}
+.pep-bar-lbl{font-size:9px;color:var(--text3);margin-bottom:3px}
+.pep-bar-outer{height:4px;background:var(--bg4);border-radius:2px}
+.pep-bar-inner{height:100%;border-radius:2px}
+
+/* VENDOR */
+.vendor-card{background:var(--bg2);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:0.5px solid var(--border)}
+.vendor-card.featured{border-color:rgba(0,214,143,0.35);background:linear-gradient(135deg,var(--bg2),var(--bg3))}
+.vendor-head{display:flex;gap:13px;align-items:flex-start;margin-bottom:12px}
+.vendor-logo{width:48px;height:48px;border-radius:var(--r);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:0.5px solid var(--border2)}
+.vendor-name{font-size:16px;font-weight:700}
+.vendor-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.stars{color:#f59e0b;font-size:14px;letter-spacing:1px}
+.vendor-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.vendor-review{background:var(--bg3);border-radius:var(--r);padding:11px 13px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:8px;border:0.5px solid var(--border)}
+.review-author{font-size:11px;color:var(--text3);margin-top:5px}
+
+/* TOAST */
+.toast{position:fixed;top:calc(var(--safeT) + 14px);left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--text);padding:11px 20px;border-radius:100px;font-size:14px;font-weight:600;z-index:500;white-space:nowrap;border:0.5px solid var(--border2);box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:tin 0.25s ease}
+@keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px}
+.empty-ic{font-size:44px;margin-bottom:12px;opacity:0.5}
+.empty-t{font-size:17px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.empty-s{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:20px}
+
+/* PROFILE HEADER */
+.p-hero{background:linear-gradient(145deg,var(--bg3),var(--bg2));border-radius:var(--rxl);padding:22px;margin-bottom:14px;border:0.5px solid rgba(126,232,162,0.12);text-align:center}
+.p-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal3));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#000;margin:0 auto 12px;letter-spacing:-1px}
+.p-name{font-size:20px;font-weight:800;letter-spacing:-0.4px}
+.p-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.p-stat{background:rgba(255,255,255,0.04);border-radius:var(--r);padding:10px;text-align:center}
+.p-stat-n{font-size:20px;font-weight:800;color:var(--teal)}
+.p-stat-l{font-size:10px;color:var(--text3)}
+
+/* SETTINGS ROW */
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--border)}
+.s-row:last-child{border:none}
+.s-label{font-size:15px;font-weight:500}
+.s-val{font-size:14px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.tgl{width:46px;height:26px;border-radius:13px;background:var(--bg4);border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background 0.2s}
+.tgl.on{background:var(--teal)}
+.tgl::after{content:'';width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.tgl.on::after{transform:translateX(20px)}
+
+/* CHAT */
+.chat-msgs{flex:1;overflow-y:auto;padding:10px 18px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.msg{max-width:84%}
+.msg.u{align-self:flex-end}
+.msg.a{align-self:flex-start}
+.bub{padding:11px 15px;border-radius:20px;font-size:14px;line-height:1.55}
+.msg.u .bub{background:var(--teal);color:#000;border-bottom-right-radius:4px;font-weight:500}
+.msg.a .bub{background:var(--bg3);color:var(--text);border-bottom-left-radius:4px;border:0.5px solid var(--border2)}
+.msg-t{font-size:11px;color:var(--text3);margin-top:4px;padding:0 4px}
+.msg.u .msg-t{text-align:right}
+.chat-in-area{padding:10px 18px;border-top:0.5px solid var(--border);background:var(--bg);display:flex;gap:8px;align-items:center;flex-shrink:0}
+.chat-in-wrap{flex:1;background:var(--bg3);border-radius:24px;padding:10px 16px;border:0.5px solid var(--border2);display:flex;align-items:center}
+.chat-in-wrap input{background:transparent;border:none;padding:0;font-size:14px;color:var(--text)}
+.chat-in-wrap input::placeholder{color:var(--text3)}
+.chat-send{width:40px;height:40px;border-radius:50%;background:var(--teal);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.15s;color:#0f0e0c}
+.chat-send:active{background:var(--teal2);transform:scale(0.9)}
+.sugs{display:flex;gap:7px;overflow-x:auto;padding:8px 18px 0;scrollbar-width:none;flex-shrink:0}
+.sugs::-webkit-scrollbar{display:none}
+.sug{background:var(--bg3);border:0.5px solid var(--border2);border-radius:100px;padding:7px 13px;font-size:12px;color:var(--text2);white-space:nowrap;cursor:pointer}
+.sug:active{background:var(--tl);border-color:var(--teal);color:var(--teal)}
+
+/* INSTALL BANNER */
+.ib{background:linear-gradient(135deg,var(--teal3),#006699);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.ib-t{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.ib-s{font-size:11px;color:rgba(255,255,255,0.7)}
+.ib-btn{background:rgba(255,255,255,0.2);color:#fff;padding:7px 13px;border-radius:var(--r);font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,0.3);cursor:pointer;flex-shrink:0}
+
+/* PEP DETAIL SHEET */
+.pep-detail-hero{background:var(--bg3);border-radius:var(--rl);padding:18px;margin-bottom:14px}
+.pep-detail-name{font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.pep-detail-alias{font-size:13px;color:var(--text2);margin-bottom:12px}
+.pep-stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.pep-stat-box{background:var(--bg4);border-radius:var(--r);padding:10px}
+.pep-stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.pep-stat-val{font-size:13px;font-weight:600}
+.beginner-note{background:var(--tl);border:1px solid rgba(126,232,162,0.18);border-radius:var(--r);padding:13px;margin-bottom:14px}
+.beginner-note-label{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.beginner-note-text{font-size:13px;color:var(--text);line-height:1.65}
+
+/* INJECTION SCALE */
+.inj-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--bg2);border:2px solid var(--border2);border-radius:var(--rl);padding:14px 8px;cursor:pointer;transition:all 0.2s;color:var(--text3)}
+.inj-opt:active{transform:scale(0.95)}
+.inj-opt.sel{border-color:var(--teal);background:rgba(126,232,162,0.07);color:var(--teal)}
+.inj-num{font-size:18px;font-weight:800;letter-spacing:-0.5px}
+.inj-syringes{width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.inj-desc-box{background:var(--bg3);border-radius:var(--rl);padding:14px 16px;border:0.5px solid var(--border2);min-height:72px;transition:all 0.2s}
+.inj-desc-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.inj-desc-text{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* INJECTION SITE TRACKER */
+.inj-tracker-wrap{position:relative;width:100%;max-width:360px;margin:0 auto}
+.inj-body-svg{width:100%;height:auto;display:block}
+.inj-zone{cursor:pointer;transition:opacity 0.2s}
+.inj-zone:active{opacity:0.7}
+.inj-dot{position:absolute;border-radius:50%;transform:translate(-50%,-50%);transition:all 0.3s;pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000}
+.inj-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
+.inj-legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.inj-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.inj-log-entry{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.inj-log-entry:last-child{border:none}
+.inj-log-zone{font-weight:600}
+.inj-log-time{font-size:11px;color:var(--text3)}
+.inj-zone-btn{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:all 0.2s;text-align:left;width:100%}
+.inj-zone-btn:active{transform:scale(0.97)}
+.inj-zone-btn.hot{border-color:#ef4444;background:rgba(239,68,68,0.08)}
+.inj-zone-btn.warm{border-color:#f59e0b;background:rgba(245,158,11,0.08)}
+.inj-zone-btn.ready{border-color:var(--teal);background:rgba(126,232,162,0.07)}
+.inj-zone-name{font-size:13px;font-weight:600}
+.inj-zone-status{font-size:11px;margin-top:2px}
+.inj-zone-btn.hot .inj-zone-status{color:#f87171}
+.inj-zone-btn.warm .inj-zone-status{color:#fcd34d}
+.inj-zone-btn.ready .inj-zone-status{color:var(--teal)}
+
+/* CLICKABLE PEPTIDE CHIP */
+.pep-chip{display:inline;color:var(--teal);font-weight:600;cursor:pointer;border-bottom:1px dotted rgba(0,214,143,0.5);transition:all 0.15s;white-space:nowrap}
+.pep-chip:active{opacity:0.7}
+
+/* SITE LOG SHEET */
+.site-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ ONBOARDING ══════════════ -->
+<div id="onboard">
+  <div class="ob-progress"><div class="ob-bar" id="ob-prog" style="width:12%"></div></div>
+  <div class="ob-screens">
+
+    <!-- Step 0: Home screen — always shown on launch -->
+    <div class="ob-screen active" id="ob-0">
+      <div class="ob-logo">
+        <div class="ob-logo-mark">PIN</div>
+        <div class="ob-logo-sub">Peptide Intelligence Network</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:8px;">
+        <div class="ob-hero">The smartest peptide companion <span>ever built.</span></div>
+        <div class="ob-desc">Track your protocol, build AI-powered stacks, explore the research, and connect with the peptide community — all in one place.</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:14px;background:var(--bg3);border-radius:var(--rl);padding:14px 16px;border:0.5px solid var(--border2);">
+            <span style="font-size:24px;flex-shrink:0;">💊</span>
+            <div>
+              <div style="font-size:15px;font-weight:700;letter-spacing:-0.2px;color:var(--text);margin-bottom:2px;">Daily Dose Tracking</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.5;">Log every injection, build streaks, and never lose track of where you are in your protocol.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;background:var(--bg3);border-radius:var(--rl);padding:14px 16px;border:0.5px solid var(--border2);">
+            <span style="font-size:24px;flex-shrink:0;">🤖</span>
+            <div>
+              <div style="font-size:15px;font-weight:700;letter-spacing:-0.2px;color:var(--text);margin-bottom:2px;">AI Stack Builder</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.5;">Describe your goals and get a fully personalized, research-backed peptide protocol in seconds.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;background:var(--bg3);border-radius:var(--rl);padding:14px 16px;border:0.5px solid var(--border2);">
+            <span style="font-size:24px;flex-shrink:0;">🔬</span>
+            <div>
+              <div style="font-size:15px;font-weight:700;letter-spacing:-0.2px;color:var(--text);margin-bottom:2px;">Live Research Database</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.5;">40+ peptides with mechanisms, dosing, safety profiles, and real PubMed studies.</div>
+            </div>
+          </div>
+        </div>
+        <!-- Returning user: skip button — only visible after first stack built -->
+        <div id="home-skip-row" style="display:none;margin-bottom:4px;">
+          <button onclick="enterApp('track')" style="width:100%;background:transparent;border:1px solid rgba(126,232,162,0.22);border-radius:var(--r);padding:12px;font-family:inherit;font-size:14px;font-weight:600;color:var(--teal);cursor:pointer;">Welcome back — Enter PIN →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 1: Age verification -->
+    <div class="ob-screen right" id="ob-1">
+      <div class="ob-question" style="margin-top:60px;">How old are you?</div>
+      <div class="ob-hint">You must be 18 or older to use PIN. This app contains research chemical information intended for adults only.</div>
+      <input type="number" class="ob-age-input" id="ob-age" placeholder="25" min="18" max="99" inputmode="numeric">
+      <div class="ob-age-label">years old</div>
+      <div id="ob-age-err" style="text-align:center;font-size:13px;color:#f87171;margin-bottom:12px;display:none;">You must be 18 or older to use PIN.</div>
+      <div style="flex:1;"></div>
+    </div>
+
+    <!-- Step 2: Primary goal -->
+    <div class="ob-screen right" id="ob-2">
+      <div class="ob-question">What's your primary goal?</div>
+      <div class="ob-hint">We'll use this to personalize your stack and research recommendations.</div>
+      <div class="ob-options" id="ob-goal-opts">
+        <div class="ob-opt" data-val="fat_loss" onclick="selectOpt(this,'ob-goal')">
+          <div class="ob-opt-icon">🔥</div><div class="ob-opt-text"><div class="ob-opt-title">Fat loss & body composition</div><div class="ob-opt-sub">GLP-1s, AOD-9604, metabolic peptides</div></div><div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="recovery" onclick="selectOpt(this,'ob-goal')">
+          <div class="ob-opt-icon">⚡</div><div class="ob-opt-text"><div class="ob-opt-title">Recovery & healing</div><div class="ob-opt-sub">BPC-157, TB-500, tissue repair</div></div><div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="performance" onclick="selectOpt(this,'ob-goal')">
+          <div class="ob-opt-icon">💪</div><div class="ob-opt-text"><div class="ob-opt-title">Performance & muscle growth</div><div class="ob-opt-sub">GH peptides, IGF-1, anabolic support</div></div><div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="cognitive" onclick="selectOpt(this,'ob-goal')">
+          <div class="ob-opt-icon">🧠</div><div class="ob-opt-text"><div class="ob-opt-title">Cognitive & mental clarity</div><div class="ob-opt-sub">Semax, Selank, nootropic peptides</div></div><div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="longevity" onclick="selectOpt(this,'ob-goal')">
+          <div class="ob-opt-icon">🌿</div><div class="ob-opt-text"><div class="ob-opt-title">Longevity & anti-aging</div><div class="ob-opt-sub">Epithalon, thymic peptides, mitochondrial</div></div><div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="hormonal" onclick="selectOpt(this,'ob-goal')">
+          <div class="ob-opt-icon">⚗️</div><div class="ob-opt-text"><div class="ob-opt-title">Hormonal optimization</div><div class="ob-opt-sub">Gonadorelin, PT-141, libido</div></div><div class="ob-opt-check">✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Experience level -->
+    <div class="ob-screen right" id="ob-3">
+      <div class="ob-question">Where are you in your peptide journey?</div>
+      <div class="ob-hint">Select the option that best describes you. This helps us calibrate recommendations and explanations to your level.</div>
+      <div class="ob-options">
+        <div class="ob-opt" data-val="beginner" onclick="selectOpt(this,'ob-exp')">
+          <div class="ob-opt-icon">🌱</div>
+          <div class="ob-opt-text">
+            <div class="ob-opt-title">New to peptides</div>
+            <div class="ob-opt-sub">Haven't used peptides yet — starting from scratch</div>
+          </div>
+          <div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="some" onclick="selectOpt(this,'ob-exp')">
+          <div class="ob-opt-icon">🌿</div>
+          <div class="ob-opt-text">
+            <div class="ob-opt-title">Some experience</div>
+            <div class="ob-opt-sub">Tried 1–3 peptides and understand the fundamentals</div>
+          </div>
+          <div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="intermediate" onclick="selectOpt(this,'ob-exp')">
+          <div class="ob-opt-icon">🔬</div>
+          <div class="ob-opt-text">
+            <div class="ob-opt-title">Experienced researcher</div>
+            <div class="ob-opt-sub">Run multiple protocols, comfortable with dosing and tracking</div>
+          </div>
+          <div class="ob-opt-check">✓</div>
+        </div>
+        <div class="ob-opt" data-val="advanced" onclick="selectOpt(this,'ob-exp')">
+          <div class="ob-opt-icon">🧬</div>
+          <div class="ob-opt-text">
+            <div class="ob-opt-title">Advanced researcher</div>
+            <div class="ob-opt-sub">Deep expertise, complex stacks, and years of hands-on research</div>
+          </div>
+          <div class="ob-opt-check">✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Injection comfort 1-5 scale -->
+    <div class="ob-screen right" id="ob-4">
+      <div class="ob-question">How comfortable are you with injections?</div>
+      <div class="ob-hint">This helps us recommend the right administration routes. No wrong answer — be honest.</div>
+      <div id="inject-scale" style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:16px;gap:8px;">
+          <div class="inj-opt" data-val="1" onclick="selectInject(this,1)">
+            <div class="inj-syringes">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="6" width="4" height="18" rx="2" fill="currentColor" opacity="0.25"/><rect x="15.5" y="4" width="1" height="4" rx="0.5" fill="currentColor" opacity="0.4"/><circle cx="16" cy="26" r="2" fill="currentColor" opacity="0.25"/></svg>
+            </div>
+            <div class="inj-num">1</div>
+          </div>
+          <div class="inj-opt" data-val="2" onclick="selectInject(this,2)">
+            <div class="inj-syringes">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="6" width="4" height="18" rx="2" fill="currentColor" opacity="0.4"/><rect x="15.5" y="4" width="1" height="4" rx="0.5" fill="currentColor" opacity="0.55"/><circle cx="16" cy="26" r="2" fill="currentColor" opacity="0.4"/></svg>
+            </div>
+            <div class="inj-num">2</div>
+          </div>
+          <div class="inj-opt" data-val="3" onclick="selectInject(this,3)">
+            <div class="inj-syringes">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="6" width="4" height="18" rx="2" fill="currentColor" opacity="0.6"/><rect x="15.5" y="4" width="1" height="4" rx="0.5" fill="currentColor" opacity="0.75"/><circle cx="16" cy="26" r="2" fill="currentColor" opacity="0.6"/></svg>
+            </div>
+            <div class="inj-num">3</div>
+          </div>
+          <div class="inj-opt" data-val="4" onclick="selectInject(this,4)">
+            <div class="inj-syringes">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="6" width="4" height="18" rx="2" fill="currentColor" opacity="0.8"/><rect x="15.5" y="4" width="1" height="4" rx="0.5" fill="currentColor" opacity="0.9"/><circle cx="16" cy="26" r="2" fill="currentColor" opacity="0.8"/></svg>
+            </div>
+            <div class="inj-num">4</div>
+          </div>
+          <div class="inj-opt" data-val="5" onclick="selectInject(this,5)">
+            <div class="inj-syringes">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="6" width="4" height="18" rx="2" fill="currentColor"/><rect x="15.5" y="4" width="1" height="4" rx="0.5" fill="currentColor"/><circle cx="16" cy="26" r="2" fill="currentColor"/></svg>
+            </div>
+            <div class="inj-num">5</div>
+          </div>
+        </div>
+        <div class="inj-desc-box" id="inj-desc">
+          <div class="inj-desc-title" id="inj-desc-title">Select your comfort level above</div>
+          <div class="inj-desc-text" id="inj-desc-text">We use this to suggest the safest and most appropriate administration routes for your protocol.</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px;padding:0 4px;">
+          <div style="font-size:11px;color:var(--text3);font-weight:500;">Not yet</div>
+          <div style="font-size:11px;color:var(--text3);font-weight:500;">Daily user</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Your stack is ready -->
+    <div class="ob-screen right" id="ob-5">
+      <div class="ob-question" style="margin-top:32px;">Your personalized stack is ready</div>
+      <div class="ob-hint">Based on your goals and experience, here's what our AI recommends to start with.</div>
+      <div class="ob-result" id="ob-stack-result">
+        <div class="ob-result-label">Recommended starter stack</div>
+        <div id="ob-stack-items">Loading...</div>
+      </div>
+      <div class="ob-disclaimer">⚠️ These are research chemicals for educational purposes only. Not FDA approved for human use. Always consult a qualified healthcare provider before starting any peptide protocol.</div>
+      <div style="background:var(--bg3);border-radius:var(--rl);padding:14px;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">What happens next</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.65;">Your stack is saved to your profile. Use the Tracking tab to log doses daily, the Stacking tab to modify or build new stacks, and Research to deep-dive into each peptide.</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ob-nav">
+    <button class="ob-btn-back" id="ob-back" onclick="obBack()" style="display:none;">←</button>
+    <button class="ob-btn-next" id="ob-next" onclick="obNext()">Get started →</button>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN APP ══════════════ -->
+<div id="main-app">
+<div class="sb"></div>
+<div class="screens">
+
+  <!-- TRACKING -->
+  <div class="screen on" id="s-track">
+    <div class="hdr">
+      <div class="hdr-left"><h1>Tracking</h1><p id="track-sub">Your protocol today</p></div>
+      <div class="hdr-btn" onclick="openSh('sh-add-dose')">+</div>
+    </div>
+    <div class="pad">
+      <div id="t-install"></div>
+      <div class="today-hero">
+        <div class="today-greet" id="t-greet">Good morning</div>
+        <div class="today-date" id="t-date">Today</div>
+        <div class="today-stats">
+          <div class="today-stat"><div class="today-stat-n" id="t-s1">0</div><div class="today-stat-l">Dosed</div></div>
+          <div class="today-stat"><div class="today-stat-n" id="t-s2">0</div><div class="today-stat-l">Remaining</div></div>
+          <div class="today-stat"><div class="today-stat-n" id="t-s3">0</div><div class="today-stat-l">Streak 🔥</div></div>
+        </div>
+      </div>
+      <div id="t-streak"></div>
+      <div class="shead"><h2>Today's doses</h2><span class="shead-a" onclick="openSh('sh-add-dose')">Add dose</span></div>
+      <div id="t-doses"></div>
+      <div class="shead"><h2>Weekly progress</h2><span class="shead-a" onclick="openSh('sh-journal')">Log week</span></div>
+      <div class="card">
+        <div class="clbl">Energy · Sleep · Body · Mood (this week)</div>
+        <div class="chart-wrap" id="t-chart"></div>
+      </div>
+      <div class="shead"><h2>Injection site tracker</h2><span class="shead-a" onclick="openSh('sh-inject-log')">Log site</span></div>
+      <div class="card" id="t-inject-card">
+        <div class="clbl">Tap a zone to log — color shows recency</div>
+        <div class="inj-tracker-wrap" id="inj-tracker-body"></div>
+        <div class="inj-legend">
+          <div class="inj-legend-item"><div class="inj-legend-dot" style="background:#ef4444;"></div>Used &lt;12h ago</div>
+          <div class="inj-legend-item"><div class="inj-legend-dot" style="background:#f59e0b;"></div>Used 12–36h ago</div>
+          <div class="inj-legend-item"><div class="inj-legend-dot" style="background:var(--teal);"></div>Ready to use</div>
+          <div class="inj-legend-item"><div class="inj-legend-dot" style="background:var(--bg4);border:1px solid var(--border2);"></div>Not logged</div>
+        </div>
+      </div>
+      <div class="shead"><h2>Recent injections</h2></div>
+      <div class="card" id="t-inject-log">
+        <div style="font-size:13px;color:var(--text3);">No injections logged yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STACKING -->
+  <div class="screen" id="s-stack">
+    <div class="hdr">
+      <div class="hdr-left"><h1>Stacking</h1><p>Build and manage your protocols</p></div>
+      <div class="hdr-btn" onclick="openSh('sh-build-stack')">+</div>
+    </div>
+    <div class="pad">
+      <div class="card card-accent" style="cursor:pointer;" onclick="openSh('sh-build-stack')">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:36px;">🤖</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;margin-bottom:3px;">AI Stack Builder</div>
+            <div style="font-size:13px;color:var(--text2);line-height:1.5;">Tell us your goals and we'll build you a personalized, research-backed peptide stack.</div>
+          </div>
+        </div>
+      </div>
+      <div class="shead"><h2>My stacks</h2></div>
+      <div id="my-stacks"></div>
+      <div class="shead"><h2>Community stacks</h2></div>
+      <div id="community-stacks"></div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="screen" id="s-research">
+    <div class="hdr">
+      <div class="hdr-left"><h1>Research</h1><p id="pep-count">40+ peptides documented</p></div>
+    </div>
+    <div class="pad">
+      <div style="margin-bottom:14px;">
+        <input type="text" id="pep-search" placeholder="Search peptides..." oninput="searchPeps()" style="border-radius:100px;">
+      </div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none;margin-bottom:4px;">
+        <div class="sug" onclick="filterCat('All')" id="cat-All" style="background:var(--teal);color:#000;border-color:var(--teal);">All</div>
+        <div class="sug" onclick="filterCat('Healing')" id="cat-Healing">Healing</div>
+        <div class="sug" onclick="filterCat('GH Axis')" id="cat-GH Axis">GH Axis</div>
+        <div class="sug" onclick="filterCat('Metabolic')" id="cat-Metabolic">Metabolic</div>
+        <div class="sug" onclick="filterCat('Cognitive')" id="cat-Cognitive">Cognitive</div>
+        <div class="sug" onclick="filterCat('Longevity')" id="cat-Longevity">Longevity</div>
+        <div class="sug" onclick="filterCat('Sexual Health')" id="cat-Sexual Health">Sexual</div>
+        <div class="sug" onclick="filterCat('Performance')" id="cat-Performance">Performance</div>
+      </div>
+      <div id="pep-list"></div>
+    </div>
+  </div>
+
+  <!-- VENDORS -->
+  <div class="screen" id="s-vendors">
+    <div class="hdr">
+      <div class="hdr-left"><h1>Vendors</h1><p>Community-rated suppliers</p></div>
+      <div class="hdr-btn" onclick="openSh('sh-add-review')">+</div>
+    </div>
+    <div class="pad">
+      <div class="card" style="background:linear-gradient(135deg,rgba(126,232,162,0.07),var(--bg2));border-color:rgba(126,232,162,0.15);margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:5px;">Community-driven directory</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">Reviews are submitted by real users. PIN does not endorse any vendor or receive commissions. Always verify independently.</div>
+        <button class="btn btn-sm bg" style="margin-top:12px;width:auto;" onclick="openSh('sh-add-review')">+ Submit review</button>
+      </div>
+      <div id="vendor-list"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="s-profile">
+    <div class="hdr"><div class="hdr-left"><h1>Profile</h1></div></div>
+    <div class="pad">
+      <div class="p-hero">
+        <div class="p-av" id="p-av">P</div>
+        <div class="p-name" id="p-name">Researcher</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;" id="p-goal-label">Setting up your profile...</div>
+        <div class="p-stats">
+          <div class="p-stat"><div class="p-stat-n" id="p-s1">0</div><div class="p-stat-l">Doses logged</div></div>
+          <div class="p-stat"><div class="p-stat-n" id="p-s2">0</div><div class="p-stat-l">Day streak</div></div>
+          <div class="p-stat"><div class="p-stat-n" id="p-s3">0</div><div class="p-stat-l">Weeks tracked</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="clbl">Active protocol</div>
+        <div id="p-protocol"><div style="font-size:13px;color:var(--text3);">No doses added yet.</div></div>
+      </div>
+      <div class="card">
+        <div class="clbl">Settings</div>
+        <div class="s-row"><span class="s-label">Dose reminders</span><button class="tgl on" id="tgl-rem" onclick="tglSet('reminders',this)"></button></div>
+        <div class="s-row"><span class="s-label">Experience level</span>
+          <select id="s-exp" onchange="saveSet()" style="width:auto;background:transparent;border:none;color:var(--text3);font-size:14px;padding:0;">
+            <option value="beginner">Beginner</option><option value="some">Some exp.</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option>
+          </select>
+        </div>
+        <div class="s-row" style="cursor:pointer;" onclick="openSh('sh-name')"><span class="s-label">Display name</span><span class="s-val" id="s-nameVal">Researcher ›</span></div>
+        <div class="s-row" style="cursor:pointer;" onclick="if(confirm('Reset all data? Cannot be undone.')){localStorage.clear();location.reload()}"><span class="s-label" style="color:#f87171;">Reset all data</span><span class="s-val">›</span></div>
+      </div>
+      <div class="card">
+        <div class="clbl">About PIN</div>
+        <div class="s-row"><span class="s-label">Version</span><span class="s-val">3.0 PWA</span></div>
+        <div class="s-row" style="cursor:pointer;" onclick="window.open('https://peptideintelligencenetwork.com','_blank')"><span class="s-label">PIN website</span><span class="s-val">›</span></div>
+        <div class="s-row" style="cursor:pointer;" onclick="window.open('mailto:hello@peptideintelligencenetwork.com','_blank')"><span class="s-label">Send feedback</span><span class="s-val">›</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;padding:12px 0 8px;line-height:1.7;">PIN is for educational and research purposes only.<br>Research chemicals not approved by FDA for human use.<br>Not medical advice.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB BAR -->
+<div class="tabbar">
+  <div class="tab on" id="tab-track" onclick="goTab('track')"><div class="tab-ic">💊</div><div class="tab-lb">Track</div><div class="tab-dot"></div></div>
+  <div class="tab" id="tab-stack" onclick="goTab('stack')"><div class="tab-ic">⚗️</div><div class="tab-lb">Stack</div><div class="tab-dot"></div></div>
+  <div class="tab" id="tab-research" onclick="goTab('research')"><div class="tab-ic">🔬</div><div class="tab-lb">Research</div><div class="tab-dot"></div></div>
+  <div class="tab" id="tab-vendors" onclick="goTab('vendors')"><div class="tab-ic">🏪</div><div class="tab-lb">Vendors</div><div class="tab-dot"></div></div>
+  <div class="tab" id="tab-profile" onclick="goTab('profile')"><div class="tab-ic">👤</div><div class="tab-lb">Profile</div><div class="tab-dot"></div></div>
+</div>
+</div><!-- /main-app -->
+
+<!-- ══ SHEETS ══ -->
+
+<!-- ADD DOSE -->
+<div class="overlay" id="sh-add-dose" onclick="closeSh('sh-add-dose',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div class="sh-title">Add dose to protocol</div>
+  <div class="field"><label>Peptide</label>
+    <select id="d-pep" onchange="onDosePepChange()">
+      <option value="">Select peptide...</option>
+      <option>BPC-157</option><option>TB-500</option><option>GHK-Cu</option><option>KPV</option><option>LL-37</option><option>Larazotide</option>
+      <option>CJC-1295</option><option>Ipamorelin</option><option>Sermorelin</option><option>GHRP-6</option><option>GHRP-2</option><option>Hexarelin</option><option>MK-677</option><option>AOD-9604</option><option>IGF-1 LR3</option><option>PEG-MGF</option><option>Follistatin 344</option>
+      <option>Semaglutide</option><option>Tirzepatide</option><option>Retatrutide</option><option>Liraglutide</option><option>MOTS-c</option><option>Humanin</option>
+      <option>Semax</option><option>Selank</option><option>Semax N-Acetyl</option><option>Selank N-Acetyl</option><option>Dihexa</option><option>Cerebrolysin</option><option>P21</option><option>Pinealon</option>
+      <option>Epithalon</option><option>Thymalin</option><option>Thymosin Alpha-1</option><option>DSIP</option><option>SS-31</option>
+      <option>PT-141</option><option>Kisspeptin-10</option><option>Oxytocin</option><option>Melanotan II</option>
+      <option>AICAR</option><option>VIP</option><option>Gonadorelin</option>
+      <option value="__custom">Custom peptide...</option>
+    </select>
+  </div>
+  <div class="field" id="d-custom-wrap" style="display:none;"><label>Peptide name</label><input type="text" id="d-custom-name" placeholder="Enter name..."></div>
+  <div class="r2">
+    <div class="field"><label>Dose amount</label><input type="number" id="d-amt" placeholder="e.g. 250"></div>
+    <div class="field"><label>Unit</label><select id="d-unit"><option>mcg</option><option>mg</option><option>IU</option><option>ml</option><option>units</option></select></div>
+  </div>
+  <div class="r2">
+    <div class="field"><label>Route</label><select id="d-route"><option>SubQ</option><option>IM</option><option>Intranasal</option><option>Oral</option><option>IV</option><option>Topical</option></select></div>
+    <div class="field"><label>Timing</label><select id="d-time"><option>Morning fasted</option><option>Pre-workout</option><option>Post-workout</option><option>Pre-sleep</option><option>With meal</option><option>As needed</option></select></div>
+  </div>
+  <div class="field"><label>Frequency</label>
+    <select id="d-freq"><option>Daily</option><option>Twice daily</option><option>3x daily</option><option>Every other day</option><option>3x per week</option><option>Twice weekly</option><option>Once weekly</option><option>As needed</option></select>
+  </div>
+  <div class="field"><label>Notes (optional)</label><input type="text" id="d-notes" placeholder="e.g. with TB-500 for healing stack"></div>
+  <button class="btn btn-p" onclick="addDose()">Add to protocol</button>
+  <button class="btn btn-o" onclick="closeSh('sh-add-dose',null)">Cancel</button>
+</div>
+</div>
+
+<!-- JOURNAL -->
+<div class="overlay" id="sh-journal" onclick="closeSh('sh-journal',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div class="sh-title">Weekly check-in</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:18px;">Rate how this week felt on your protocol. 1 = poor, 5 = excellent.</div>
+  <div id="j-metrics-wrap"></div>
+  <div class="field"><label>Side effects or observations</label><textarea id="j-effects" placeholder="Any side effects, symptoms, or things you noticed..."></textarea></div>
+  <div class="field"><label>Results this week</label><textarea id="j-results" placeholder="What progress or changes did you observe?"></textarea></div>
+  <button class="btn btn-p" onclick="saveJournal()">Save check-in</button>
+  <button class="btn btn-o" onclick="closeSh('sh-journal',null)">Cancel</button>
+</div>
+</div>
+
+<!-- BUILD STACK -->
+<div class="overlay" id="sh-build-stack" onclick="closeSh('sh-build-stack',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div class="sh-title">AI Stack Builder</div>
+  <div class="field"><label>Primary goal</label>
+    <select id="sb-goal">
+      <option value="fat_loss">Fat loss and body composition</option>
+      <option value="recovery">Recovery and healing</option>
+      <option value="performance">Performance and muscle growth</option>
+      <option value="cognitive">Cognitive and mental clarity</option>
+      <option value="longevity">Longevity and anti-aging</option>
+      <option value="hormonal">Hormonal optimization</option>
+    </select>
+  </div>
+  <div class="r2">
+    <div class="field"><label>Experience</label>
+      <select id="sb-exp">
+        <option value="beginner">Beginner</option>
+        <option value="some">Some exp.</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+    <div class="field"><label>Injections OK?</label>
+      <select id="sb-inject">
+        <option value="no">No injections</option>
+        <option value="subq">SubQ only</option>
+        <option value="any">Any route</option>
+      </select>
+    </div>
+  </div>
+  <div class="field"><label>Monthly budget (approx)</label>
+    <select id="sb-budget">
+      <option value="low">Under $100</option>
+      <option value="mid">$100-300</option>
+      <option value="high">$300+</option>
+    </select>
+  </div>
+  <div class="field"><label>Additional context (optional)</label><textarea id="sb-context" placeholder="Any injuries, conditions, or specific things you want to target..." style="min-height:60px;"></textarea></div>
+  <div id="sb-result" style="display:none;background:var(--bg3);border-radius:var(--rl);padding:16px;margin-bottom:14px;border:0.5px solid rgba(126,232,162,0.15);">
+    <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Your personalized stack</div>
+    <div id="sb-result-content"></div>
+  </div>
+  <button class="btn btn-p" id="sb-btn" onclick="buildStack()">Build my stack</button>
+  <button class="btn btn-o" onclick="closeSh('sh-build-stack',null)">Cancel</button>
+</div>
+</div>
+
+<!-- PEPTIDE DETAIL -->
+<div class="overlay" id="sh-pep-detail" onclick="closeSh('sh-pep-detail',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div id="sh-pep-detail-content"></div>
+  <button class="btn btn-p" id="sh-pep-add-btn" onclick="addPepFromDetail()">Add to protocol</button>
+  <button class="btn btn-o" onclick="closeSh('sh-pep-detail',null)">Close</button>
+</div>
+</div>
+
+<!-- ADD VENDOR REVIEW -->
+<div class="overlay" id="sh-add-review" onclick="closeSh('sh-add-review',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div class="sh-title">Submit vendor review</div>
+  <div class="field"><label>Vendor name</label><input type="text" id="rv-vendor" placeholder="e.g. PeptidesUSA"></div>
+  <div class="field"><label>Your rating</label>
+    <div style="display:flex;gap:8px;margin-top:4px;" id="rv-stars-wrap">
+      <span class="star" style="font-size:32px;" onclick="setRating(1)" id="rv-s1">★</span>
+      <span class="star" style="font-size:32px;" onclick="setRating(2)" id="rv-s2">★</span>
+      <span class="star" style="font-size:32px;" onclick="setRating(3)" id="rv-s3">★</span>
+      <span class="star" style="font-size:32px;" onclick="setRating(4)" id="rv-s4">★</span>
+      <span class="star" style="font-size:32px;" onclick="setRating(5)" id="rv-s5">★</span>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="field"><label>Shipping speed</label>
+      <select id="rv-shipping"><option>Fast (1-3 days)</option><option>Normal (3-7 days)</option><option>Slow (7+ days)</option><option>International</option></select>
+    </div>
+    <div class="field"><label>Product quality</label>
+      <select id="rv-quality"><option>Excellent</option><option>Good</option><option>Average</option><option>Poor</option></select>
+    </div>
+  </div>
+  <div class="field"><label>Which peptides did you order?</label><input type="text" id="rv-peptides" placeholder="e.g. BPC-157, TB-500"></div>
+  <div class="field"><label>Your review</label><textarea id="rv-text" placeholder="Share your honest experience — quality, purity, customer service, packaging..."></textarea></div>
+  <div class="field"><label>Your username (optional)</label><input type="text" id="rv-user" placeholder="Anonymous"></div>
+  <button class="btn btn-p" onclick="submitReview()">Submit review</button>
+  <button class="btn btn-o" onclick="closeSh('sh-add-review',null)">Cancel</button>
+</div>
+</div>
+
+<!-- CHANGE NAME -->
+<div class="overlay" id="sh-name" onclick="closeSh('sh-name',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div class="sh-title">Display name</div>
+  <div class="field"><label>Your name or username</label><input type="text" id="name-inp" placeholder="Researcher"></div>
+  <button class="btn btn-p" onclick="saveName()">Save</button>
+  <button class="btn btn-o" onclick="closeSh('sh-name',null)">Cancel</button>
+</div>
+</div>
+
+<!-- INJECTION SITE LOG -->
+<div class="overlay" id="sh-inject-log" onclick="closeSh('sh-inject-log',event)">
+<div class="sheet">
+  <div class="sh-hdl"></div>
+  <div class="sh-title">Log injection site</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Select the zone you just injected. PIN tracks rest windows and warns you if a site needs more recovery time.</div>
+  <div class="field"><label>Peptide injected</label>
+    <select id="inj-pep-select">
+      <option value="">Select peptide...</option>
+      <option>BPC-157</option><option>TB-500</option><option>CJC-1295</option><option>Ipamorelin</option><option>Semaglutide</option><option>Tirzepatide</option><option>Retatrutide</option><option>Epithalon</option><option>PT-141</option><option>Thymalin</option><option>SS-31</option><option>MOTS-c</option><option>Other</option>
+    </select>
+  </div>
+  <div class="field"><label>Route</label>
+    <select id="inj-route-select">
+      <option value="SubQ">SubQ (subcutaneous)</option>
+      <option value="IM">IM (intramuscular)</option>
+    </select>
+  </div>
+  <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Select injection zone</div>
+  <div class="site-grid" id="inj-site-grid"></div>
+  <button class="btn btn-p" onclick="logInjectionSite()">Log this injection</button>
+  <button class="btn btn-o" onclick="closeSh('sh-inject-log',null)">Cancel</button>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+var doses = JSON.parse(localStorage.getItem('pin_doses') || '[]');
+var vials = JSON.parse(localStorage.getItem('pin_vials') || '[]');
+var journal = JSON.parse(localStorage.getItem('pin_journal') || '[]');
+var stacks = JSON.parse(localStorage.getItem('pin_stacks') || '[]');
+var reviews = JSON.parse(localStorage.getItem('pin_reviews') || '[]');
+var settings = JSON.parse(localStorage.getItem('pin_settings') || '{"reminders":true,"exp":"beginner","name":"Researcher"}');
+var profile = JSON.parse(localStorage.getItem('pin_profile') || '{"goal":"","exp":"","inject":"","age":0}');
+var streak = parseInt(localStorage.getItem('pin_streak') || '0');
+var todayKey = 'pin_tlog_' + new Date().toDateString();
+var todayLog = JSON.parse(localStorage.getItem(todayKey) || '{}');
+var jRatings = {e:0,sl:0,b:0,m:0};
+var rvRating = 0;
+var selectedPepDetail = null;
+var obStep = 0;
+var obAnswers = {goal:'', exp:'', inject:''};
+var injectLevel = 0;
+var onboarded = localStorage.getItem('pin_onboarded') === '1';
+
+function save() {
+  localStorage.setItem('pin_doses', JSON.stringify(doses));
+  localStorage.setItem('pin_vials', JSON.stringify(vials));
+  localStorage.setItem('pin_journal', JSON.stringify(journal));
+  localStorage.setItem('pin_stacks', JSON.stringify(stacks));
+  localStorage.setItem('pin_reviews', JSON.stringify(reviews));
+  localStorage.setItem('pin_settings', JSON.stringify(settings));
+  localStorage.setItem('pin_profile', JSON.stringify(profile));
+  localStorage.setItem(todayKey, JSON.stringify(todayLog));
+}
+
+function toast(msg) {
+  var old = document.querySelector('.toast');
+  if (old) old.remove();
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function() { if (el.parentNode) el.remove(); }, 2500);
+}
+
+// ══════════════════════════════════════
+// SHEETS
+// ══════════════════════════════════════
+function openSh(id) {
+  document.getElementById(id).classList.add('on');
+  if (id === 'sh-journal') buildJournalMetrics();
+  if (id === 'sh-inject-log') buildInjSiteGrid();
+}
+
+function closeSh(id, e) {
+  if (e === null || e.target.id === id) {
+    document.getElementById(id).classList.remove('on');
+  }
+}
+
+// ══════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════
+var OB_STEPS = 6;
+
+function updateObProgress() {
+  document.getElementById('ob-prog').style.width = (((obStep + 1) / OB_STEPS) * 100) + '%';
+  document.getElementById('ob-back').style.display = obStep > 0 ? 'flex' : 'none';
+  var nextBtn = document.getElementById('ob-next');
+  if (obStep === OB_STEPS - 1) {
+    nextBtn.textContent = 'Enter PIN →';
+  } else if (obStep === 0) {
+    nextBtn.textContent = onboarded ? 'Enter PIN →' : 'Get started →';
+  } else {
+    nextBtn.textContent = 'Continue →';
+  }
+}
+
+function showObScreen(idx) {
+  document.querySelectorAll('.ob-screen').forEach(function(s, i) {
+    s.className = 'ob-screen ' + (i === idx ? 'active' : i < idx ? 'left' : 'right');
+  });
+}
+
+function selectOpt(el, key) {
+  var parent = el.parentElement;
+  parent.querySelectorAll('.ob-opt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+  obAnswers[key] = el.getAttribute('data-val');
+}
+
+var INJ_LABELS = {
+  1: {title:"No experience yet", text:"No problem. We will only recommend oral, intranasal, or topical peptides. No injections needed to get started.", val:"no"},
+  2: {title:"Aware but not tried yet", text:"You know injections exist but have not done one yet. We will show you beginner-safe routes and guide you through SubQ when you are ready.", val:"aware"},
+  3: {title:"Learning — nervous but open", text:"You have tried or are open to SubQ injections. We will include subcutaneous options with clear guidance and beginner-friendly protocols.", val:"learning"},
+  4: {title:"Comfortable with SubQ", text:"You regularly self-administer subcutaneous injections. Full range of SubQ and intranasal peptides available to you.", val:"subq"},
+  5: {title:"Use injections regularly", text:"Experienced with SubQ and IM injections. All administration routes unlocked — full peptide library available.", val:"yes"}
+};
+
+function selectInject(el, level) {
+  document.querySelectorAll('.inj-opt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+  injectLevel = level;
+  var info = INJ_LABELS[level];
+  document.getElementById('inj-desc-title').textContent = info.title;
+  document.getElementById('inj-desc-text').textContent = info.text;
+  obAnswers['ob-inject'] = info.val;
+  document.getElementById('inj-desc').style.borderColor = 'rgba(126,232,162,0.22)';
+}
+
+function obNext() {
+  if (obStep === 0) {
+    if (onboarded) {
+      enterApp('track');
+      return;
+    }
+    obStep = 1; showObScreen(1); updateObProgress(); return;
+  }
+  if (obStep === 1) {
+    var age = parseInt(document.getElementById('ob-age').value);
+    document.getElementById('ob-age-err').style.display = 'none';
+    if (!age || age < 18) { document.getElementById('ob-age-err').style.display = 'block'; return; }
+    profile.age = age;
+    obStep = 2; showObScreen(2); updateObProgress(); return;
+  }
+  if (obStep === 2) {
+    if (!obAnswers['ob-goal']) { toast('Please select a goal'); return; }
+    profile.goal = obAnswers['ob-goal'];
+    obStep = 3; showObScreen(3); updateObProgress(); return;
+  }
+  if (obStep === 3) {
+    if (!obAnswers['ob-exp']) { toast('Please select your experience level'); return; }
+    profile.exp = obAnswers['ob-exp'];
+    settings.exp = obAnswers['ob-exp'];
+    obStep = 4; showObScreen(4); updateObProgress(); return;
+  }
+  if (obStep === 4) {
+    if (!injectLevel) { toast('Please select your injection comfort level (1-5)'); return; }
+    profile.inject = obAnswers['ob-inject'] || 'learning';
+    profile.injectLevel = injectLevel;
+    obStep = 5; showObScreen(5); updateObProgress();
+    buildObStack();
+    return;
+  }
+  if (obStep === 5) {
+    try {
+      localStorage.setItem('pin_onboarded', '1');
+      profile.onboarded = true;
+      save();
+    } catch(e) {}
+    try { renderTracking(); } catch(e) {}
+    try { renderResearch(); } catch(e) {}
+    try { renderStacks(); } catch(e) {}
+    try { renderVendors(); } catch(e) {}
+    try { renderProfile(); } catch(e) {}
+    // Pre-show main app so it's ready
+    var mainApp = document.getElementById('main-app');
+    if (mainApp) { mainApp.style.display = 'flex'; mainApp.style.flexDirection = 'column'; mainApp.style.flex = '1'; mainApp.style.overflow = 'hidden'; }
+    goTab('track');
+    showHomeReturning();
+    return;
+  }
+}
+
+function obBack() {
+  if (obStep > 0) {
+    obStep--;
+    showObScreen(obStep);
+    updateObProgress();
+  }
+}
+
+var OB_STACKS = {
+  fat_loss: [
+    {name:'Semaglutide', dose:'0.25mg/week', route:'SubQ', cat:'Metabolic', safe:9, noInject:false},
+    {name:'AOD-9604', dose:'300mcg/day', route:'SubQ', cat:'GH Axis', safe:9, noInject:false},
+    {name:'MOTS-c', dose:'5mg 3x/wk', route:'SubQ', cat:'Metabolic', safe:8, noInject:false},
+  ],
+  recovery: [
+    {name:'BPC-157', dose:'250mcg/day', route:'SubQ or Oral', cat:'Healing', safe:10, noInject:false},
+    {name:'TB-500', dose:'2mg 2x/wk', route:'SubQ', cat:'Healing', safe:8, noInject:false},
+    {name:'GHK-Cu', dose:'1mg/day', route:'SubQ', cat:'Healing', safe:9, noInject:false},
+  ],
+  performance: [
+    {name:'CJC-1295', dose:'1mg/wk', route:'SubQ', cat:'GH Axis', safe:8, noInject:false},
+    {name:'Ipamorelin', dose:'250mcg/night', route:'SubQ', cat:'GH Axis', safe:9, noInject:false},
+    {name:'BPC-157', dose:'250mcg/day', route:'SubQ', cat:'Healing', safe:10, noInject:false},
+  ],
+  cognitive: [
+    {name:'Semax', dose:'400mcg/day', route:'Intranasal', cat:'Cognitive', safe:9, noInject:true},
+    {name:'Selank', dose:'300mcg/day', route:'Intranasal', cat:'Cognitive', safe:10, noInject:true},
+    {name:'BPC-157', dose:'250mcg/day', route:'Oral', cat:'Healing', safe:10, noInject:true},
+  ],
+  longevity: [
+    {name:'Epithalon', dose:'5mg/day x10', route:'SubQ', cat:'Longevity', safe:9, noInject:false},
+    {name:'Thymalin', dose:'5mg/day x10', route:'SubQ', cat:'Longevity', safe:9, noInject:false},
+    {name:'Thymosin Alpha-1', dose:'1.6mg 2x/wk', route:'SubQ', cat:'Longevity', safe:9, noInject:false},
+  ],
+  hormonal: [
+    {name:'PT-141', dose:'0.5mg as needed', route:'SubQ', cat:'Sexual Health', safe:7, noInject:false},
+    {name:'Gonadorelin', dose:'100mcg 3x/wk', route:'SubQ', cat:'Performance', safe:8, noInject:false},
+    {name:'Kisspeptin-10', dose:'5mcg/kg', route:'SubQ', cat:'Sexual Health', safe:8, noInject:false},
+  ],
+};
+
+var CAT_COLORS = {
+  'Healing':{'bg':'#0a2e1a','text':'#00d68f','dot':'#00d68f'},
+  'GH Axis':{'bg':'#0a1a2e','text':'#60a5fa','dot':'#3b82f6'},
+  'Metabolic':{'bg':'#2e1a0a','text':'#fcd34d','dot':'#f59e0b'},
+  'Cognitive':{'bg':'#1a0a2e','text':'#c4b5fd','dot':'#8b5cf6'},
+  'Longevity':{'bg':'#0a2e0a','text':'#86efac','dot':'#22c55e'},
+  'Sleep':{'bg':'#0a2e0a','text':'#86efac','dot':'#22c55e'},
+  'Sexual Health':{'bg':'#2e0a1a','text':'#fda4af','dot':'#f43f5e'},
+  'Performance':{'bg':'#0a1a2e','text':'#60a5fa','dot':'#3b82f6'},
+  'Immune':{'bg':'#0a2e0a','text':'#86efac','dot':'#22c55e'},
+};
+
+function buildObStack() {
+  var goal = profile.goal || 'recovery';
+  var noInject = profile.injectLevel <= 1;
+  var stack = OB_STACKS[goal] || OB_STACKS['recovery'];
+  var filtered = stack.filter(function(p) { return !noInject || p.noInject; });
+  if (!filtered.length) filtered = OB_STACKS['cognitive'];
+
+  var html = '';
+  filtered.forEach(function(p) {
+    var cc = CAT_COLORS[p.cat] || CAT_COLORS['Healing'];
+    html += '<div class="ob-stack-item">';
+    html += '<div style="width:8px;height:8px;border-radius:50%;background:' + cc.dot + ';flex-shrink:0;"></div>';
+    html += '<div class="ob-stack-name">' + p.name + '</div>';
+    html += '<div class="ob-stack-dose">' + p.dose + '</div>';
+    html += '<span class="badge bg" style="font-size:9px;background:' + cc.bg + ';color:' + cc.text + ';border:none;">' + p.cat + '</span>';
+    html += '</div>';
+  });
+  document.getElementById('ob-stack-items').innerHTML = html;
+
+  // Auto-save this stack
+  stacks = stacks.filter(function(s) { return s.id !== 'onboard'; });
+  var goalLabels = {fat_loss:'Fat Loss',recovery:'Recovery',performance:'Performance',cognitive:'Cognitive',longevity:'Longevity',hormonal:'Hormonal'};
+  stacks.unshift({
+    id: 'onboard',
+    name: goalLabels[goal] + ' Starter Stack',
+    goal: goal,
+    peptides: filtered.map(function(p) { return p.name + ' — ' + p.dose + ' · ' + p.route; }),
+    created: new Date().toLocaleDateString(),
+    shared: false,
+    community: false,
+  });
+  save();
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function goTab(id) {
+  // Safety: always ensure main app is visible and onboarding is hidden
+  var ob = document.getElementById('onboard');
+  var mainApp = document.getElementById('main-app');
+  if (ob && ob.style.display !== 'none') {
+    ob.style.display = 'none';
+  }
+  if (mainApp && mainApp.style.display !== 'flex') {
+    mainApp.style.display = 'flex';
+    mainApp.style.flexDirection = 'column';
+    mainApp.style.flex = '1';
+    mainApp.style.overflow = 'hidden';
+  }
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('on'); });
+  var screen = document.getElementById('s-' + id);
+  var tab = document.getElementById('tab-' + id);
+  if (screen) screen.classList.add('on');
+  if (tab) tab.classList.add('on');
+  if (id === 'track') renderTracking();
+  if (id === 'stack') renderStacks();
+  if (id === 'research') renderResearch();
+  if (id === 'vendors') renderVendors();
+  if (id === 'profile') renderProfile();
+}
+
+// ══════════════════════════════════════
+// TRACKING
+// ══════════════════════════════════════
+function renderTracking() {
+  var now = new Date();
+  var h = now.getHours();
+  document.getElementById('t-greet').textContent = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('t-date').textContent = now.toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric'});
+
+  var dosed = 0;
+  for (var k in todayLog) { if (todayLog[k]) dosed++; }
+  var total = doses.length;
+  document.getElementById('t-s1').textContent = dosed;
+  document.getElementById('t-s2').textContent = Math.max(0, total - dosed);
+  document.getElementById('t-s3').textContent = streak;
+  document.getElementById('track-sub').textContent = total ? total + ' peptide' + (total !== 1 ? 's' : '') + ' in protocol' : 'No doses yet — tap + to add';
+
+  // Install banner
+  var instEl = document.getElementById('t-install');
+  if (!window.matchMedia('(display-mode: standalone)').matches && !localStorage.getItem('pin_no_install')) {
+    instEl.innerHTML = '<div class="ib"><div style="flex:1;"><div class="ib-t">Add PIN to home screen</div><div class="ib-s">Tap Share then Add to Home Screen</div></div><button class="ib-btn" onclick="localStorage.setItem(\'pin_no_install\',\'1\');document.getElementById(\'t-install\').innerHTML=\'\'">Got it</button></div>';
+  }
+
+  // Streak
+  var streakEl = document.getElementById('t-streak');
+  if (streak > 0) {
+    var day = now.getDay();
+    var dots = '';
+    for (var i = 0; i < 7; i++) { dots += '<div class="streak-dot' + (i < (day || 7) ? ' on' : '') + '"></div>'; }
+    streakEl.innerHTML = '<div class="streak-row"><div><div class="streak-n">' + streak + '</div></div><div><div style="font-size:14px;font-weight:700;">Day streak 🔥</div><div style="font-size:12px;color:var(--text3);margin-top:3px;">Keep dosing consistently</div><div class="streak-dots">' + dots + '</div></div></div>';
+  } else {
+    streakEl.innerHTML = '';
+  }
+
+  // Doses
+  var dl = document.getElementById('t-doses');
+  if (!doses.length) {
+    dl.innerHTML = '<div class="empty"><div class="empty-ic">💊</div><div class="empty-t">No doses in protocol</div><div class="empty-s">Add your peptides to start tracking your daily protocol and building your streak.</div><button class="btn btn-p" style="max-width:220px;margin:0 auto;" onclick="openSh(\'sh-add-dose\')">Add first dose</button></div>';
+  } else {
+    var html = '';
+    for (var i = 0; i < doses.length; i++) {
+      var d = doses[i];
+      var done = todayLog[i] ? true : false;
+      html += '<div class="dose-item' + (done ? ' done' : '') + '">';
+      html += '<div class="dose-check' + (done ? ' ck' : '') + '" onclick="toggleDose(' + i + ')">' + (done ? '✓' : '') + '</div>';
+      html += '<div class="dose-body"><div class="dose-name">' + linkPeptideNames(d.pep) + '</div>';
+      html += '<div class="dose-meta">' + d.amt + ' ' + d.unit + ' · ' + d.route + (d.notes ? ' · ' + d.notes : '') + '</div>';
+      html += '<div class="dose-time ' + (done ? '' : 'due') + '">' + (done ? '✓ Logged today' : '⏰ ' + d.time) + '</div></div>';
+      html += '<div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">';
+      html += '<span class="badge bg" style="font-size:9px;">' + d.freq + '</span>';
+      html += '<div style="font-size:16px;cursor:pointer;color:var(--text3);padding:4px;" onclick="removeDose(' + i + ')">✕</div>';
+      html += '</div></div>';
+    }
+    dl.innerHTML = html;
+  }
+
+  // Chart
+  renderChart();
+  // Injection tracker
+  renderInjTracker();
+}
+
+function toggleDose(i) {
+  todayLog[i] = !todayLog[i];
+  if (todayLog[i]) {
+    var allDone = true;
+    for (var j = 0; j < doses.length; j++) { if (!todayLog[j]) { allDone = false; break; } }
+    if (allDone && doses.length > 0) {
+      streak++;
+      localStorage.setItem('pin_streak', streak);
+      toast('🔥 All doses complete! Streak: ' + streak + ' days');
+    } else {
+      toast('✓ ' + doses[i].pep + ' logged');
+    }
+  }
+  save();
+  renderTracking();
+}
+
+function removeDose(i) {
+  if (confirm('Remove ' + doses[i].pep + ' from protocol?')) {
+    doses.splice(i, 1);
+    delete todayLog[i];
+    save();
+    renderTracking();
+    toast('Removed');
+  }
+}
+
+function onDosePepChange() {
+  var v = document.getElementById('d-pep').value;
+  document.getElementById('d-custom-wrap').style.display = v === '__custom' ? 'block' : 'none';
+}
+
+function addDose() {
+  var pepSel = document.getElementById('d-pep').value;
+  var pep = pepSel === '__custom' ? document.getElementById('d-custom-name').value.trim() : pepSel;
+  var amt = document.getElementById('d-amt').value.trim();
+  var unit = document.getElementById('d-unit').value;
+  var route = document.getElementById('d-route').value;
+  var time = document.getElementById('d-time').value;
+  var freq = document.getElementById('d-freq').value;
+  var notes = document.getElementById('d-notes').value.trim();
+  if (!pep || !amt) { toast('Please fill in peptide and dose amount'); return; }
+  doses.push({pep:pep, amt:amt, unit:unit, route:route, time:time, freq:freq, notes:notes, added:new Date().toISOString()});
+  save();
+  closeSh('sh-add-dose', null);
+  document.getElementById('d-pep').value = '';
+  document.getElementById('d-amt').value = '';
+  document.getElementById('d-notes').value = '';
+  document.getElementById('d-custom-wrap').style.display = 'none';
+  renderTracking();
+  toast('✓ ' + pep + ' added to protocol');
+}
+
+function addPepFromDetail() {
+  if (!selectedPepDetail) return;
+  closeSh('sh-pep-detail', null);
+  document.getElementById('d-pep').value = selectedPepDetail;
+  openSh('sh-add-dose');
+}
+
+// ══════════════════════════════════════
+// CHART
+// ══════════════════════════════════════
+function renderChart() {
+  var el = document.getElementById('t-chart');
+  if (!journal.length) {
+    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text3);text-align:center;">Log weekly check-ins to see your progress chart</div>';
+    return;
+  }
+  var recent = journal.slice(0, 7).reverse();
+  var metrics = ['e','sl','b','m'];
+  var labels = ['En','Sl','Bo','Mo'];
+  var colors = ['var(--teal)','#3b82f6','#f59e0b','#8b5cf6'];
+  var html = '';
+  recent.forEach(function(j, wi) {
+    var avgTotal = 0;
+    metrics.forEach(function(m) { avgTotal += (j[m] || 0); });
+    var avg = avgTotal / 4;
+    var pct = (avg / 5) * 100;
+    html += '<div class="chart-bar-wrap">';
+    html += '<div class="chart-bar-outer"><div class="chart-bar-inner" style="height:' + pct + '%;background:linear-gradient(to top,var(--teal2),var(--teal));"></div></div>';
+    html += '<div class="chart-lbl">W' + j.week + '</div>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════
+// JOURNAL
+// ══════════════════════════════════════
+function buildJournalMetrics() {
+  jRatings = {e:0,sl:0,b:0,m:0};
+  var defs = [{key:'e',label:'⚡ Energy'},{key:'sl',label:'😴 Sleep'},{key:'b',label:'💪 Body'},{key:'m',label:'🧠 Mood'}];
+  var html = '';
+  defs.forEach(function(d) {
+    html += '<div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;margin-bottom:8px;">' + d.label + '</div>';
+    html += '<div style="display:flex;gap:6px;">';
+    for (var n = 1; n <= 5; n++) {
+      html += '<span class="star" style="font-size:28px;" onclick="rateJ(\'' + d.key + '\',' + n + ')" id="jr-' + d.key + '-' + n + '">★</span>';
+    }
+    html += '</div></div>';
+  });
+  document.getElementById('j-metrics-wrap').innerHTML = html;
+}
+
+function rateJ(metric, val) {
+  jRatings[metric] = val;
+  for (var n = 1; n <= 5; n++) {
+    var el = document.getElementById('jr-' + metric + '-' + n);
+    if (el) el.className = 'star' + (n <= val ? ' on' : '');
+  }
+}
+
+function saveJournal() {
+  var effects = document.getElementById('j-effects').value.trim();
+  var results = document.getElementById('j-results').value.trim();
+  journal.unshift({
+    week: journal.length + 1,
+    date: new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
+    e: jRatings.e, sl: jRatings.sl, b: jRatings.b, m: jRatings.m,
+    effects: effects, results: results,
+    protocol: doses.map(function(d) { return d.pep; }).join(', ')
+  });
+  save();
+  closeSh('sh-journal', null);
+  document.getElementById('j-effects').value = '';
+  document.getElementById('j-results').value = '';
+  renderTracking();
+  toast('✓ Week ' + journal[0].week + ' logged');
+}
+
+// ══════════════════════════════════════
+// STACKING
+// ══════════════════════════════════════
+var COMMUNITY_STACKS_DATA = [
+  {name:'Healing & Recovery Stack',goal:'recovery',peptides:['BPC-157 — 250mcg/day SubQ','TB-500 — 2mg 2x/wk SubQ','GHK-Cu — 1mg/day SubQ'],tags:['Healing','Beginner-friendly'],rating:4.8,uses:1240,notes:'Most popular beginner healing stack. Great for injuries, joint pain, and gut issues.'},
+  {name:'GH Optimizer',goal:'performance',peptides:['CJC-1295 — 1mg/wk SubQ','Ipamorelin — 250mcg pre-sleep SubQ','MK-677 — 10mg/day Oral'],tags:['GH Axis','Intermediate'],rating:4.7,uses:890,notes:'Classic GH axis protocol. Expect improved sleep and gradual body recomposition.'},
+  {name:'Nootropic Focus Stack',goal:'cognitive',peptides:['Semax N-Acetyl — 300mcg/day Intranasal','Selank N-Acetyl — 250mcg/day Intranasal'],tags:['Cognitive','No injections'],rating:4.6,uses:650,notes:'No injections required. Potent BDNF boost with anxiolytic grounding.'},
+  {name:'Russian Longevity Protocol',goal:'longevity',peptides:['Epithalon — 5mg/day x10 days SubQ','Thymalin — 5mg/day x10 days SubQ'],tags:['Longevity','Annual'],rating:4.9,uses:420,notes:'Decades of research behind this one. Run 2x/year for comprehensive anti-aging effects.'},
+  {name:'Fat Loss & Metabolic Stack',goal:'fat_loss',peptides:['Semaglutide — 0.25mg/wk SubQ','AOD-9604 — 300mcg/day SubQ fasted'],tags:['Metabolic','Advanced'],rating:4.5,uses:780,notes:'Potent fat loss combination. Titrate semaglutide slowly to minimize GI side effects.'},
+];
+
+function renderStacks() {
+  var myEl = document.getElementById('my-stacks');
+  var commEl = document.getElementById('community-stacks');
+
+  if (!stacks.length) {
+    myEl.innerHTML = '<div class="empty"><div class="empty-ic">⚗️</div><div class="empty-t">No saved stacks</div><div class="empty-s">Use the AI Stack Builder to create your first personalized protocol.</div></div>';
+  } else {
+    var html = '';
+    stacks.forEach(function(s, i) {
+      html += '<div class="stack-card" onclick="void(0)">';
+      html += '<div class="stack-card-head"><div class="stack-name">' + s.name + '</div><div style="font-size:13px;color:var(--text3);">' + (s.created || '') + '</div></div>';
+      html += '<div class="stack-peptides">' + (s.peptides || []).slice(0,3).map(linkPeptideNames).join('<br>') + '</div>';
+      html += '<div style="display:flex;justify-content:space-between;margin-top:10px;">';
+      html += '<button class="btn btn-p btn-sm" onclick="loadStack(' + i + ')">Load into tracker</button>';
+      html += '<button class="btn btn-danger btn-sm" onclick="deleteStack(' + i + ')">Delete</button>';
+      html += '</div></div>';
+    });
+    myEl.innerHTML = html;
+  }
+
+  var chtml = '';
+  COMMUNITY_STACKS_DATA.forEach(function(s, i) {
+    var goalBadges = {fat_loss:'bb',recovery:'bg',performance:'bb',cognitive:'bp',longevity:'bg',hormonal:'bp'};
+    chtml += '<div class="stack-card">';
+    chtml += '<div class="stack-card-head"><div class="stack-name">' + s.name + '</div><div style="font-size:13px;font-weight:700;color:#f59e0b;">★ ' + s.rating + '</div></div>';
+    chtml += '<div class="stack-tags">';
+    s.tags.forEach(function(t) { chtml += '<span class="badge bg">' + t + '</span>'; });
+    chtml += '</div>';
+    chtml += '<div class="stack-peptides">' + s.peptides.slice(0,3).map(linkPeptideNames).join('<br>') + '</div>';
+    chtml += '<div class="stack-meta"><span>' + s.uses.toLocaleString() + ' researchers</span></div>';
+    if (s.notes) chtml += '<div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5;">' + s.notes + '</div>';
+    chtml += '<button class="btn btn-p btn-sm" style="margin-top:12px;" onclick="loadCommunityStack(' + i + ')">Use this stack</button>';
+    chtml += '</div>';
+  });
+  commEl.innerHTML = chtml;
+}
+
+function loadStack(i) {
+  var s = stacks[i];
+  if (!s || !s.peptides) return;
+  if (!confirm('Load "' + s.name + '" into your tracker? This will add its peptides as doses.')) return;
+  s.peptides.forEach(function(p) {
+    var parts = p.split(' — ');
+    var name = parts[0];
+    var rest = parts[1] ? parts[1].split(' ') : ['', 'mcg'];
+    var amt = rest[0].replace(/[^0-9.]/g,'') || '250';
+    var unit = rest[0].replace(/[0-9.]/g,'') || 'mcg';
+    doses.push({pep:name, amt:amt, unit:unit, route:'SubQ', time:'Morning fasted', freq:'Daily', notes:''});
+  });
+  save();
+  toast('✓ Stack loaded into tracker');
+  goTab('track');
+}
+
+function loadCommunityStack(i) {
+  var s = COMMUNITY_STACKS_DATA[i];
+  if (!confirm('Add "' + s.name + '" to My Stacks?')) return;
+  stacks.unshift({
+    id: 'comm_' + Date.now(),
+    name: s.name,
+    goal: s.goal,
+    peptides: s.peptides,
+    created: new Date().toLocaleDateString(),
+    shared: false,
+    community: true,
+  });
+  save();
+  renderStacks();
+  toast('✓ Stack saved to My Stacks');
+}
+
+function deleteStack(i) {
+  if (confirm('Delete "' + stacks[i].name + '"?')) {
+    stacks.splice(i, 1);
+    save();
+    renderStacks();
+    toast('Stack deleted');
+  }
+}
+
+async function buildStack() {
+  var goal = document.getElementById('sb-goal').value;
+  var exp = document.getElementById('sb-exp').value;
+  var inject = document.getElementById('sb-inject').value;
+  var budget = document.getElementById('sb-budget').value;
+  var context = document.getElementById('sb-context').value.trim();
+
+  var btn = document.getElementById('sb-btn');
+  btn.textContent = 'Building your stack...';
+  btn.disabled = true;
+
+  var goalMap = {fat_loss:'fat loss and body composition',recovery:'recovery and healing',performance:'performance and muscle growth',cognitive:'cognitive enhancement and mental clarity',longevity:'longevity and anti-aging',hormonal:'hormonal optimization'};
+  var budgetMap = {low:'under $100/month',mid:'$100-300/month',high:'$300+ per month'};
+  var injectMap = {no:'no injections — oral, intranasal, or topical routes only',subq:'subcutaneous injections only',any:'any route including IM'};
+
+  var prompt = 'Build a personalized research peptide stack for someone with the following profile:\n- Goal: ' + (goalMap[goal]||goal) + '\n- Experience: ' + exp + '\n- Injection comfort: ' + (injectMap[inject]||inject) + '\n- Budget: ' + (budgetMap[budget]||budget) + (context ? '\n- Additional context: ' + context : '') + '\n\nProvide 2-4 peptides max. For each one include: name, dose, route, frequency, and a one-sentence plain-English reason why it fits this person\'s goals. Format it as a simple list. Keep it concise and beginner-friendly where appropriate. Always remind that these are research chemicals for educational purposes only.';
+
+  try {
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:400, messages:[{role:'user',content:prompt}]})
+    });
+    var data = await res.json();
+    var reply = data.content ? data.content.map(function(b){return b.text||'';}).join('') : 'Could not generate stack. Please try again.';
+
+    document.getElementById('sb-result').style.display = 'block';
+    document.getElementById('sb-result-content').innerHTML = linkPeptideNames(reply).replace(/\n/g,'<br>');
+
+    // Save the stack
+    var goalLabels = {fat_loss:'Fat Loss',recovery:'Recovery',performance:'Performance',cognitive:'Cognitive',longevity:'Longevity',hormonal:'Hormonal'};
+    stacks.unshift({
+      id: 'ai_' + Date.now(),
+      name: (goalLabels[goal]||'Custom') + ' Stack (AI)',
+      goal: goal,
+      peptides: [reply.substring(0, 200) + '...'],
+      created: new Date().toLocaleDateString(),
+      aiGenerated: true,
+      fullText: reply,
+    });
+    save();
+    btn.textContent = 'Build another stack';
+    btn.disabled = false;
+  } catch(e) {
+    document.getElementById('sb-result').style.display = 'block';
+    document.getElementById('sb-result-content').textContent = 'Connection error. Please check your internet and try again.';
+    btn.textContent = 'Try again';
+    btn.disabled = false;
+  }
+}
+
+// ══════════════════════════════════════
+// RESEARCH
+// ══════════════════════════════════════
+var PEPTIDES = [
+  {name:'BPC-157',alias:'Body Protection Compound',cat:'Healing',eff:9,safe:10,route:'SubQ/Oral',dose:'250-500mcg/day',freq:'Daily',cycle:'4-12 wks',mechanism:'Promotes angiogenesis and tendon/ligament repair via GH receptor upregulation.',beginnerNote:'Safest peptide for beginners. Start 250mcg/day. Oral works for gut issues.',icon:'🟢'},
+  {name:'TB-500',alias:'Thymosin Beta-4',cat:'Healing',eff:8,safe:8,route:'SubQ/IM',dose:'2mg 2x/week',freq:'2x weekly',cycle:'4-6 wks loading',mechanism:'Promotes systemic healing via actin polymerization and anti-inflammatory action.',beginnerNote:'Pair with BPC-157 for the gold-standard healing stack. Works systemically.',icon:'🟢'},
+  {name:'GHK-Cu',alias:'Copper Peptide',cat:'Healing',eff:7,safe:9,route:'SubQ/Topical',dose:'1-2mg/day',freq:'Daily',cycle:'4-8 wks',mechanism:'Stimulates collagen synthesis via copper-binding and antioxidant pathways.',beginnerNote:'Very safe. Also effective topically for skin. Good longevity addition.',icon:'🟢'},
+  {name:'KPV',alias:'Lysine-Proline-Valine',cat:'Healing',eff:7,safe:9,route:'Oral/SubQ',dose:'200-500mcg/day',freq:'Daily',cycle:'4-8 wks',mechanism:'Alpha-MSH fragment; anti-inflammatory via NF-κB pathway inhibition.',beginnerNote:'Can be taken orally — no injections needed. Great for gut inflammation.',icon:'🟢'},
+  {name:'CJC-1295',alias:'Modified GRF 1-44',cat:'GH Axis',eff:9,safe:8,route:'SubQ',dose:'1-2mg/week',freq:'Once weekly (DAC)',cycle:'8-12 wks',mechanism:'GHRH analogue; stimulates pulsatile GH release from the pituitary.',beginnerNote:'Always pair with a GHRP like Ipamorelin. Expect deeper sleep within 1-2 weeks.',icon:'🔵'},
+  {name:'Ipamorelin',alias:'Selective GHRP',cat:'GH Axis',eff:8,safe:9,route:'SubQ',dose:'200-300mcg/dose',freq:'2-3x daily',cycle:'8-12 wks',mechanism:'Selective GHRP; triggers GH release without cortisol or prolactin elevation.',beginnerNote:'Administer fasted, ideally pre-sleep. Cleanest GHRP — minimal side effects.',icon:'🔵'},
+  {name:'Sermorelin',alias:'GRF 1-29',cat:'GH Axis',eff:7,safe:9,route:'SubQ',dose:'200-500mcg/day',freq:'Daily pre-sleep',cycle:'3-6 months',mechanism:'Natural GHRH sequence; gently stimulates pituitary GH secretion.',beginnerNote:'Gentlest GH peptide. Ideal starting point for those over 40.',icon:'🔵'},
+  {name:'MK-677',alias:'Ibutamoren',cat:'GH Axis',eff:9,safe:7,route:'Oral',dose:'10-25mg/day',freq:'Daily',cycle:'3-6 months',mechanism:'Oral ghrelin receptor agonist; non-peptide GH secretagogue.',beginnerNote:'Oral — no injections. Start at 10mg. Water retention and hunger are common.',icon:'🔵'},
+  {name:'AOD-9604',alias:'Anti-Obesity Drug',cat:'GH Axis',eff:7,safe:9,route:'SubQ',dose:'250-500mcg/day',freq:'Daily fasted AM',cycle:'12-16 wks',mechanism:'C-terminal GH fragment; lipolysis without IGF-1 anabolic effects.',beginnerNote:'Purely for fat loss. Administer fasted in the morning for best results.',icon:'🔵'},
+  {name:'Semaglutide',alias:'GLP-1 Agonist',cat:'Metabolic',eff:10,safe:7,route:'SubQ',dose:'0.25mg/wk → 2.4mg/wk',freq:'Once weekly',cycle:'Ongoing',mechanism:'GLP-1 receptor agonist; reduces appetite and slows gastric emptying.',beginnerNote:'Start at 0.25mg and titrate VERY slowly. GI nausea is common early on.',icon:'🟡'},
+  {name:'Tirzepatide',alias:'Dual GLP-1/GIP',cat:'Metabolic',eff:10,safe:7,route:'SubQ',dose:'2.5mg/wk → 15mg/wk',freq:'Once weekly',cycle:'Ongoing',mechanism:'Dual GIP/GLP-1 agonist; superior weight loss to semaglutide monotherapy.',beginnerNote:'Start very low, titrate slowly. NEVER combine with other GLP-1 agonists.',icon:'🟡'},
+  {name:'Retatrutide',alias:'Triple GLP-1/GIP/Glucagon',cat:'Metabolic',eff:10,safe:6,route:'SubQ',dose:'1mg/wk → 12mg/wk',freq:'Once weekly',cycle:'Ongoing',mechanism:'Triple GLP-1/GIP/Glucagon agonist; most potent metabolic peptide in research.',beginnerNote:'Most powerful fat loss peptide available. Advanced users only. Titrate very slowly.',icon:'🟡'},
+  {name:'MOTS-c',alias:'Mitochondrial Peptide',cat:'Metabolic',eff:8,safe:8,route:'SubQ/IM',dose:'5-10mg 3x/week',freq:'3x weekly',cycle:'4-8 wks',mechanism:'Mitochondria-derived peptide; activates AMPK, improves insulin sensitivity.',beginnerNote:'Exercise-mimetic. Best results when combined with regular training.',icon:'🟡'},
+  {name:'Semax',alias:'ACTH(4-7)-Pro-Gly-Pro',cat:'Cognitive',eff:9,safe:9,route:'Intranasal',dose:'200-600mcg/day',freq:'Daily',cycle:'2-4 wks on/off',mechanism:'ACTH analogue; increases BDNF, upregulates dopaminergic and serotonergic systems.',beginnerNote:'Intranasal — no injections. Effects on focus often noticeable within days.',icon:'🟣'},
+  {name:'Selank',alias:'Tuftsin Analogue',cat:'Cognitive',eff:8,safe:10,route:'Intranasal',dose:'250-500mcg/day',freq:'Daily',cycle:'2-4 wks',mechanism:'Anxiolytic peptide; modulates GABA-A and increases enkephalin levels.',beginnerNote:'Extremely safe. Calming without sedation. Great first nootropic peptide.',icon:'🟣'},
+  {name:'Semax N-Acetyl',alias:'Modified Semax',cat:'Cognitive',eff:9,safe:9,route:'Intranasal',dose:'100-400mcg/day',freq:'Daily',cycle:'2-4 wks on/off',mechanism:'Enhanced Semax with N-acetyl and amide modifications for extended potency.',beginnerNote:'More potent and longer-lasting than standard Semax. Start at lower doses.',icon:'🟣'},
+  {name:'Dihexa',alias:'PNB-0408',cat:'Cognitive',eff:9,safe:6,route:'Oral/Topical',dose:'10-30mg/wk',freq:'2-3x weekly',cycle:'4-8 wks',mechanism:'HGF/c-Met superagonist; promotes synaptogenesis — 10^7x more potent than BDNF.',beginnerNote:'Not for beginners. Extraordinarily potent. Very limited human safety data.',icon:'🟣'},
+  {name:'Epithalon',alias:'Epitalon / Epithalone',cat:'Longevity',eff:9,safe:9,route:'SubQ/IM',dose:'5-10mg/day',freq:'Daily x10-20 days',cycle:'2-3x/year',mechanism:'Telomerase activator; extends telomere length and regulates melatonin production.',beginnerNote:'Run as 10-20 day courses 2-3x/year. Sleep improvement often within first few days.',icon:'💚'},
+  {name:'Thymalin',alias:'Thymus Peptide Complex',cat:'Longevity',eff:8,safe:9,route:'SubQ/IM',dose:'5-10mg/day',freq:'Daily x10 days',cycle:'1-2x/year',mechanism:'Thymus-derived peptide; restores thymic function and immune competence.',beginnerNote:'Pair with Epithalon for the classic Russian longevity protocol.',icon:'💚'},
+  {name:'Thymosin Alpha-1',alias:'Tα1 / Zadaxin',cat:'Longevity',eff:8,safe:9,route:'SubQ',dose:'1.6mg 2x/week',freq:'Twice weekly',cycle:'6-12 months',mechanism:'Thymic peptide; enhances T-cell function and innate immune response.',beginnerNote:'Most clinically validated immune peptide. Used in 40+ countries for hepatitis.',icon:'💚'},
+  {name:'SS-31',alias:'Elamipretide',cat:'Longevity',eff:8,safe:8,route:'SubQ',dose:'0.1mg/kg/day',freq:'Daily',cycle:'4-8 wks',mechanism:'Targets cardiolipin in mitochondrial membrane; restores ATP and reduces ROS.',beginnerNote:'Dose by body weight. Often paired with MOTS-c for mitochondrial support.',icon:'💚'},
+  {name:'DSIP',alias:'Delta Sleep-Inducing Peptide',cat:'Longevity',eff:7,safe:9,route:'SubQ',dose:'100-300mcg/night',freq:'As needed',cycle:'As needed',mechanism:'Neuropeptide promoting slow-wave sleep via neuroendocrine modulation.',beginnerNote:'Non-habit forming. Use as needed pre-sleep. Great for stress-related insomnia.',icon:'💚'},
+  {name:'PT-141',alias:'Bremelanotide',cat:'Sexual Health',eff:9,safe:7,route:'SubQ/Intranasal',dose:'0.5-2mg as needed',freq:'Max 2x/week',cycle:'As needed',mechanism:'MC3R/MC4R agonist; centrally-acting aphrodisiac for both sexes.',beginnerNote:'Start at 0.5mg. Nausea is dose-dependent — lower dose means less nausea.',icon:'🌸'},
+  {name:'Kisspeptin-10',alias:'Metastin 10-19',cat:'Sexual Health',eff:8,safe:8,route:'SubQ',dose:'1-10mcg/kg',freq:'Pulsatile',cycle:'4-8 wks',mechanism:'Hypothalamic neuropeptide; triggers pulsatile LH/FSH release.',beginnerNote:'Dose by body weight. Useful for hormonal restoration alongside TRT.',icon:'🌸'},
+  {name:'Oxytocin',alias:'Love hormone',cat:'Sexual Health',eff:7,safe:8,route:'Intranasal',dose:'10-40 IU',freq:'As needed',cycle:'As needed',mechanism:'Endogenous neuropeptide; bonding, trust, social behavior, and arousal.',beginnerNote:'Intranasal spray — easy delivery. Effects subtle and context-dependent.',icon:'🌸'},
+  {name:'AICAR',alias:'AMPK Activator',cat:'Performance',eff:8,safe:7,route:'SubQ/IM',dose:'50-100mg/day',freq:'Daily',cycle:'4-8 wks',mechanism:'AMPK activator; mimics exercise, increases mitochondrial biogenesis.',beginnerNote:'WADA-banned in sport. Significant endurance and metabolic benefits.',icon:'🔵'},
+  {name:'VIP',alias:'Vasoactive Intestinal Peptide',cat:'Performance',eff:8,safe:7,route:'Intranasal/SubQ',dose:'25-50mcg 2x/day',freq:'Twice daily',cycle:'12 wks',mechanism:'Pleiotropic neuropeptide; anti-inflammatory, vasodilatory, immunomodulatory.',beginnerNote:'Used for CIRS and chronic inflammatory conditions. Intranasal is practical.',icon:'🔵'},
+  {name:'Gonadorelin',alias:'GnRH / LHRH',cat:'Performance',eff:8,safe:8,route:'SubQ',dose:'100mcg 3x/week',freq:'3x weekly',cycle:'Ongoing with TRT',mechanism:'Endogenous GnRH; stimulates LH and FSH to maintain testicular function.',beginnerNote:'Commonly used with TRT to preserve testicular size and fertility.',icon:'🔵'},
+];
+
+var currentCat = 'All';
+
+function filterCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('[id^="cat-"]').forEach(function(el) {
+    if (el.id === 'cat-' + cat) {
+      el.style.background = 'var(--teal)';
+      el.style.color = '#000';
+      el.style.borderColor = 'var(--teal)';
+    } else {
+      el.style.background = '';
+      el.style.color = '';
+      el.style.borderColor = '';
+    }
+  });
+  renderResearch();
+}
+
+function searchPeps() {
+  renderResearch();
+}
+
+function renderResearch() {
+  var query = (document.getElementById('pep-search').value || '').toLowerCase();
+  var filtered = PEPTIDES.filter(function(p) {
+    var catMatch = currentCat === 'All' || p.cat === currentCat;
+    var searchMatch = !query || p.name.toLowerCase().indexOf(query) > -1 || p.alias.toLowerCase().indexOf(query) > -1 || p.cat.toLowerCase().indexOf(query) > -1;
+    return catMatch && searchMatch;
+  });
+  document.getElementById('pep-count').textContent = filtered.length + ' peptides' + (currentCat !== 'All' ? ' in ' + currentCat : '');
+  var cc = {'Healing':'#00d68f','GH Axis':'#60a5fa','Metabolic':'#fcd34d','Cognitive':'#c4b5fd','Longevity':'#86efac','Sleep':'#86efac','Sexual Health':'#fda4af','Performance':'#60a5fa','Immune':'#86efac'};
+  var bg = {'Healing':'#0a2e1a','GH Axis':'#0a1a2e','Metabolic':'#2e1a0a','Cognitive':'#1a0a2e','Longevity':'#0a2e0a','Sleep':'#0a2e0a','Sexual Health':'#2e0a1a','Performance':'#0a1a2e','Immune':'#0a2e0a'};
+  var html = '';
+  filtered.forEach(function(p, i) {
+    var color = cc[p.cat] || 'var(--teal)';
+    var bgColor = bg[p.cat] || '#0a2e1a';
+    html += '<div class="pep-card" onclick="showPepDetail(' + i + ',\'' + p.name.replace(/'/g,"\\'") + '\')">';
+    html += '<div class="pep-icon" style="background:' + bgColor + ';"><span>' + p.icon + '</span></div>';
+    html += '<div class="pep-body">';
+    html += '<div class="pep-name">' + p.name + '</div>';
+    html += '<div class="pep-sub">' + p.alias + ' · ' + p.dose + '</div>';
+    html += '<div class="pep-bars">';
+    html += '<div class="pep-bar-wrap"><div class="pep-bar-lbl">Efficacy</div><div class="pep-bar-outer"><div class="pep-bar-inner" style="width:' + (p.eff*10) + '%;background:var(--teal);height:100%;border-radius:2px;"></div></div></div>';
+    html += '<div class="pep-bar-wrap"><div class="pep-bar-lbl">Safety</div><div class="pep-bar-outer"><div class="pep-bar-inner" style="width:' + (p.safe*10) + '%;background:#3b82f6;height:100%;border-radius:2px;"></div></div></div>';
+    html += '</div></div>';
+    html += '<span style="font-size:12px;color:' + color + ';">›</span>';
+    html += '</div>';
+  });
+  document.getElementById('pep-list').innerHTML = html || '<div class="empty"><div class="empty-ic">🔬</div><div class="empty-t">No peptides found</div><div class="empty-s">Try a different search term or category.</div></div>';
+}
+
+function showPepDetail(listIdx, name) {
+  var p = PEPTIDES.find(function(x) { return x.name === name; });
+  if (!p) return;
+  selectedPepDetail = p.name;
+  var cc = {'Healing':'#00d68f','GH Axis':'#60a5fa','Metabolic':'#fcd34d','Cognitive':'#c4b5fd','Longevity':'#86efac','Sleep':'#86efac','Sexual Health':'#fda4af','Performance':'#60a5fa','Immune':'#86efac'};
+  var bgc = {'Healing':'#0a2e1a','GH Axis':'#0a1a2e','Metabolic':'#2e1a0a','Cognitive':'#1a0a2e','Longevity':'#0a2e0a','Sleep':'#0a2e0a','Sexual Health':'#2e0a1a','Performance':'#0a1a2e','Immune':'#0a2e0a'};
+  var color = cc[p.cat] || 'var(--teal)';
+  var bgColor = bgc[p.cat] || '#0a2e1a';
+
+  var html = '<div class="pep-detail-hero">';
+  html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">';
+  html += '<div style="width:52px;height:52px;border-radius:var(--r);background:' + bgColor + ';display:flex;align-items:center;justify-content:center;font-size:24px;">' + p.icon + '</div>';
+  html += '<div><div class="pep-detail-name">' + p.name + '</div><div class="pep-detail-alias">' + p.alias + '</div></div></div>';
+  html += '<span style="background:' + bgColor + ';color:' + color + ';font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;">' + p.cat + '</span>';
+  html += '<div class="pep-stats-row">';
+  html += '<div class="pep-stat-box"><div class="pep-stat-lbl">Dose</div><div class="pep-stat-val">' + p.dose + '</div></div>';
+  html += '<div class="pep-stat-box"><div class="pep-stat-lbl">Route</div><div class="pep-stat-val">' + p.route + '</div></div>';
+  html += '<div class="pep-stat-box"><div class="pep-stat-lbl">Frequency</div><div class="pep-stat-val">' + p.freq + '</div></div>';
+  html += '<div class="pep-stat-box"><div class="pep-stat-lbl">Cycle</div><div class="pep-stat-val">' + p.cycle + '</div></div>';
+  html += '</div></div>';
+  html += '<div class="beginner-note"><div class="beginner-note-label">👋 Beginner note</div><div class="beginner-note-text">' + p.beginnerNote + '</div></div>';
+  html += '<div class="card" style="margin-bottom:14px;"><div class="clbl">Mechanism of action</div><div style="font-size:14px;color:var(--text2);line-height:1.65;">' + p.mechanism + '</div></div>';
+  html += '<div class="card" style="margin-bottom:14px;"><div class="clbl">Efficacy & safety</div>';
+  html += '<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;"><div style="width:60px;font-size:12px;color:var(--text3);">Efficacy</div><div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;"><div style="width:' + (p.eff*10) + '%;height:100%;border-radius:4px;background:var(--teal);"></div></div><div style="font-size:12px;font-weight:700;margin-left:6px;color:var(--teal);">' + p.eff + '/10</div></div>';
+  html += '<div style="display:flex;gap:8px;align-items:center;"><div style="width:60px;font-size:12px;color:var(--text3);">Safety</div><div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;"><div style="width:' + (p.safe*10) + '%;height:100%;border-radius:4px;background:#3b82f6;"></div></div><div style="font-size:12px;font-weight:700;margin-left:6px;color:#60a5fa;">' + p.safe + '/10</div></div>';
+  html += '</div>';
+  document.getElementById('sh-pep-detail-content').innerHTML = html;
+  openSh('sh-pep-detail');
+}
+
+// ══════════════════════════════════════
+// VENDORS
+// ══════════════════════════════════════
+var SAMPLE_VENDORS = [
+  {name:'Vendor A',emoji:'🧬',featured:true,rating:4.8,reviews:142,tags:['BPC-157','TB-500','US-Based','3rd party tested'],desc:'Consistently high quality with fast US domestic shipping. COAs available on request.',reviewsList:[{text:'Ordered BPC-157 three times. Always arrives in 3 days, sealed properly, visible results on my shoulder injury.',user:'r/Peptides user',rating:5},{text:'Third-party COAs look legit. Products work as expected. Customer service replied same day.',user:'Verified PIN user',rating:5}]},
+  {name:'Vendor B',emoji:'🔬',featured:false,rating:4.5,reviews:87,tags:['GLP-1','Metabolic','International'],desc:'Specializes in GLP-1 class peptides. Ships internationally. HPLC tested.',reviewsList:[{text:'Semaglutide worked well, matching clinical expectations for weight loss over 8 weeks.',user:'Verified PIN user',rating:4},{text:'International shipping took 10 days but product was fine. Good packaging.',user:'Anonymous',rating:4}]},
+  {name:'Vendor C',emoji:'⚗️',featured:false,rating:4.2,reviews:34,tags:['Cognitive','Longevity','Europe'],desc:'EU-based supplier focusing on nootropic and longevity peptides. COA available.',reviewsList:[{text:'Semax worked well for focus, but EU shipping to US took 2 weeks.',user:'Anonymous',rating:4}]},
+];
+
+function setRating(val) {
+  rvRating = val;
+  for (var i = 1; i <= 5; i++) {
+    var el = document.getElementById('rv-s' + i);
+    if (el) el.className = 'star' + (i <= val ? ' on' : '');
+  }
+}
+
+function submitReview() {
+  var vendor = document.getElementById('rv-vendor').value.trim();
+  var text = document.getElementById('rv-text').value.trim();
+  var peptides = document.getElementById('rv-peptides').value.trim();
+  var user = document.getElementById('rv-user').value.trim() || 'Anonymous';
+  if (!vendor || !text) { toast('Please fill in vendor name and review'); return; }
+  if (!rvRating) { toast('Please select a rating'); return; }
+  reviews.unshift({vendor:vendor, rating:rvRating, text:text, peptides:peptides, user:user, date:new Date().toLocaleDateString(), shipping:document.getElementById('rv-shipping').value, quality:document.getElementById('rv-quality').value});
+  save();
+  closeSh('sh-add-review', null);
+  renderVendors();
+  toast('✓ Review submitted — thank you!');
+  document.getElementById('rv-vendor').value = '';
+  document.getElementById('rv-text').value = '';
+  document.getElementById('rv-peptides').value = '';
+  document.getElementById('rv-user').value = '';
+  rvRating = 0;
+  for (var i = 1; i <= 5; i++) { var el = document.getElementById('rv-s'+i); if(el) el.className = 'star'; }
+}
+
+function renderVendors() {
+  var allVendors = SAMPLE_VENDORS.map(function(v) { return {name:v.name, emoji:v.emoji, featured:v.featured, rating:v.rating, reviews:v.reviews, tags:v.tags, desc:v.desc, reviewsList:v.reviewsList, userSubmitted:false}; });
+  var grouped = {};
+  reviews.forEach(function(r) {
+    if (!grouped[r.vendor]) grouped[r.vendor] = [];
+    grouped[r.vendor].push(r);
+  });
+  Object.keys(grouped).forEach(function(vname) {
+    var vrevs = grouped[vname];
+    var avg = vrevs.reduce(function(a,b){return a+b.rating;},0)/vrevs.length;
+    allVendors.push({name:vname, emoji:'⭐', featured:false, rating:Math.round(avg*10)/10, reviews:vrevs.length, tags:[], desc:'Community-submitted vendor', reviewsList:vrevs.map(function(r){return {text:r.text,user:r.user,rating:r.rating};}), userSubmitted:true});
+  });
+
+  var html = '';
+  allVendors.forEach(function(v) {
+    html += '<div class="vendor-card' + (v.featured ? ' featured' : '') + '">';
+    html += '<div class="vendor-head">';
+    html += '<div class="vendor-logo">' + v.emoji + '</div>';
+    html += '<div><div style="display:flex;align-items:center;gap:7px;">';
+    html += '<div class="vendor-name">' + v.name + '</div>';
+    if (v.featured) html += '<span class="badge bg">Featured</span>';
+    if (v.userSubmitted) html += '<span class="badge bb">Community</span>';
+    html += '</div><div class="stars">' + '★'.repeat(Math.round(v.rating)) + '</div>';
+    html += '<div style="font-size:12px;color:var(--text3);">' + v.rating + ' · ' + v.reviews + ' reviews</div></div></div>';
+    if (v.tags.length) {
+      html += '<div class="vendor-tags">';
+      v.tags.forEach(function(t) { html += '<span class="badge bg">' + t + '</span>'; });
+      html += '</div>';
+    }
+    html += '<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;">' + v.desc + '</div>';
+    v.reviewsList.slice(0,2).forEach(function(r) {
+      html += '<div class="vendor-review">"' + linkPeptideNames(r.text) + '"<div class="review-author">— ' + r.user + ' · ' + '★'.repeat(r.rating) + '</div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('vendor-list').innerHTML = html;
+}
+
+// ══════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════
+function renderProfile() {
+  var name = settings.name || 'Researcher';
+  document.getElementById('p-av').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('p-name').textContent = name;
+  var goalLabels = {fat_loss:'Fat Loss · ',recovery:'Recovery · ',performance:'Performance · ',cognitive:'Cognitive · ',longevity:'Longevity · ',hormonal:'Hormonal · ','':('')}; 
+  document.getElementById('p-goal-label').textContent = (goalLabels[profile.goal] || '') + (profile.exp || 'Beginner') + ' researcher';
+  var totalLogged = parseInt(localStorage.getItem('pin_total_logged') || '0');
+  document.getElementById('p-s1').textContent = totalLogged;
+  document.getElementById('p-s2').textContent = streak;
+  document.getElementById('p-s3').textContent = journal.length;
+  document.getElementById('s-exp').value = settings.exp || 'beginner';
+  document.getElementById('tgl-rem').className = 'tgl' + (settings.reminders ? ' on' : '');
+  document.getElementById('s-nameVal').textContent = name + ' ›';
+  var pp = document.getElementById('p-protocol');
+  if (doses.length) {
+    var html = '';
+    doses.forEach(function(d) {
+      html += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);">';
+      html += '<span style="font-size:14px;font-weight:500;">' + d.pep + '</span>';
+      html += '<span style="font-size:12px;color:var(--text3);">' + d.amt + d.unit + ' · ' + d.route + '</span></div>';
+    });
+    pp.innerHTML = html;
+  } else {
+    pp.innerHTML = '<div style="font-size:13px;color:var(--text3);">No doses added yet.</div>';
+  }
+}
+
+function tglSet(key, el) {
+  settings[key] = !settings[key];
+  el.className = 'tgl' + (settings[key] ? ' on' : '');
+  save();
+}
+
+function saveSet() {
+  settings.exp = document.getElementById('s-exp').value;
+  save();
+}
+
+function saveName() {
+  var n = document.getElementById('name-inp').value.trim();
+  if (!n) return;
+  settings.name = n;
+  save();
+  closeSh('sh-name', null);
+  renderProfile();
+  toast('✓ Name updated');
+}
+
+// ══════════════════════════════════════
+// HOME SCREEN LOGIC
+// ══════════════════════════════════════
+
+function showHomeNew() {
+  var skipRow = document.getElementById('home-skip-row');
+  if (skipRow) skipRow.style.display = 'none';
+  document.getElementById('ob-next').textContent = 'Get started →';
+  document.getElementById('ob-back').style.display = 'none';
+  document.getElementById('ob-prog').style.width = '12%';
+}
+
+function showHomeReturning() {
+  obStep = 0;
+  showObScreen(0);
+  var skipRow = document.getElementById('home-skip-row');
+  if (skipRow) skipRow.style.display = 'block';
+  document.getElementById('ob-next').textContent = 'Get started →';
+  document.getElementById('ob-back').style.display = 'none';
+  document.getElementById('ob-prog').style.width = '12%';
+}
+function enterApp(tab) {
+  var ob = document.getElementById('onboard');
+  var mainApp = document.getElementById('main-app');
+  ob.style.transition = 'opacity 0.25s ease';
+  ob.style.opacity = '0';
+  setTimeout(function() {
+    ob.style.display = 'none';
+    ob.style.opacity = '';
+    mainApp.style.display = 'flex';
+    mainApp.style.flexDirection = 'column';
+    mainApp.style.flex = '1';
+    mainApp.style.overflow = 'hidden';
+    goTab(tab || 'track');
+  }, 250);
+}
+
+// ══════════════════════════════════════
+// INJECTION SITE TRACKER
+// ══════════════════════════════════════
+
+var injectionLog = JSON.parse(localStorage.getItem('pin_inject_log') || '[]');
+
+var INJ_ZONES = [
+  {id:'abd-r-upper', label:'Abdomen R Upper', restH:24},
+  {id:'abd-l-upper', label:'Abdomen L Upper', restH:24},
+  {id:'abd-r-lower', label:'Abdomen R Lower', restH:24},
+  {id:'abd-l-lower', label:'Abdomen L Lower', restH:24},
+  {id:'thigh-r',     label:'Right Thigh',     restH:48},
+  {id:'thigh-l',     label:'Left Thigh',      restH:48},
+  {id:'glute-r',     label:'Right Glute',     restH:48},
+  {id:'glute-l',     label:'Left Glute',      restH:48},
+  {id:'delt-r',      label:'Right Deltoid',   restH:48},
+  {id:'delt-l',      label:'Left Deltoid',    restH:48},
+];
+
+var ZONE_SVG_POS = {
+  'abd-r-upper': {x:42, y:80},
+  'abd-l-upper': {x:58, y:80},
+  'abd-r-lower': {x:42, y:97},
+  'abd-l-lower': {x:58, y:97},
+  'thigh-r':     {x:40, y:155},
+  'thigh-l':     {x:60, y:155},
+  'glute-r':     {x:140, y:130},
+  'glute-l':     {x:160, y:130},
+  'delt-r':      {x:128, y:65},
+  'delt-l':      {x:172, y:65},
+};
+
+var selectedInjZone = null;
+
+function getZoneStatus(zoneId) {
+  var now = Date.now();
+  var recent = injectionLog.filter(function(e) { return e.zone === zoneId; });
+  if (!recent.length) return {state:'unused', hoursAgo: null};
+  var last = recent.reduce(function(a,b) { return a.ts > b.ts ? a : b; });
+  var hoursAgo = (now - last.ts) / 3600000;
+  var zone = INJ_ZONES.find(function(z) { return z.id === zoneId; });
+  var restH = zone ? zone.restH : 24;
+  if (hoursAgo < 12) return {state:'hot', hoursAgo: hoursAgo, last: last};
+  if (hoursAgo < restH) return {state:'warm', hoursAgo: hoursAgo, last: last};
+  return {state:'ready', hoursAgo: hoursAgo, last: last};
+}
+
+function renderInjTracker() {
+  var wrap = document.getElementById('inj-tracker-body');
+  if (!wrap) return;
+  var svg = '<svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" class="inj-body-svg">';
+  var fx = 50;
+  svg += '<ellipse cx="' + fx + '" cy="20" rx="12" ry="14" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<rect x="' + (fx-4) + '" y="33" width="8" height="7" rx="2" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (fx-18) + ' 40 Q' + (fx-20) + ' 55 ' + (fx-16) + ' 90 Q' + (fx-14) + ' 105 ' + (fx-12) + ' 115 L' + (fx+12) + ' 115 Q' + (fx+14) + ' 105 ' + (fx+16) + ' 90 Q' + (fx+20) + ' 55 ' + (fx+18) + ' 40 Z" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (fx-18) + ' 42 Q' + (fx-28) + ' 50 ' + (fx-26) + ' 75 L' + (fx-22) + ' 95" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (fx+18) + ' 42 Q' + (fx+28) + ' 50 ' + (fx+26) + ' 75 L' + (fx+22) + ' 95" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (fx-12) + ' 115 Q' + (fx-20) + ' 118 ' + (fx-18) + ' 125 L' + (fx+18) + ' 125 Q' + (fx+20) + ' 118 ' + (fx+12) + ' 115 Z" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (fx-14) + ' 125 Q' + (fx-16) + ' 150 ' + (fx-14) + ' 175 L' + (fx-10) + ' 205" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (fx+14) + ' 125 Q' + (fx+16) + ' 150 ' + (fx+14) + ' 175 L' + (fx+10) + ' 205" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<text x="' + fx + '" y="220" text-anchor="middle" font-size="8" fill="#475569" font-family="Inter,sans-serif" font-weight="600">FRONT</text>';
+  var bx = 150;
+  svg += '<ellipse cx="' + bx + '" cy="20" rx="12" ry="14" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<rect x="' + (bx-4) + '" y="33" width="8" height="7" rx="2" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (bx-18) + ' 40 Q' + (bx-20) + ' 55 ' + (bx-16) + ' 90 Q' + (bx-14) + ' 105 ' + (bx-12) + ' 115 L' + (bx+12) + ' 115 Q' + (bx+14) + ' 105 ' + (bx+16) + ' 90 Q' + (bx+20) + ' 55 ' + (bx+18) + ' 40 Z" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<line x1="' + bx + '" y1="42" x2="' + bx + '" y2="112" stroke="#334155" stroke-width="0.75" stroke-dasharray="2,2"/>';
+  svg += '<path d="M' + (bx-18) + ' 42 Q' + (bx-28) + ' 50 ' + (bx-26) + ' 75 L' + (bx-22) + ' 95" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (bx+18) + ' 42 Q' + (bx+28) + ' 50 ' + (bx+26) + ' 75 L' + (bx+22) + ' 95" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (bx-12) + ' 115 Q' + (bx-20) + ' 118 ' + (bx-18) + ' 125 L' + (bx+18) + ' 125 Q' + (bx+20) + ' 118 ' + (bx+12) + ' 115 Z" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (bx-14) + ' 125 Q' + (bx-16) + ' 150 ' + (bx-14) + ' 175 L' + (bx-10) + ' 205" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<path d="M' + (bx+14) + ' 125 Q' + (bx+16) + ' 150 ' + (bx+14) + ' 175 L' + (bx+10) + ' 205" fill="none" stroke="#334155" stroke-width="1.5"/>';
+  svg += '<text x="' + bx + '" y="220" text-anchor="middle" font-size="8" fill="#475569" font-family="Inter,sans-serif" font-weight="600">BACK</text>';
+
+  INJ_ZONES.forEach(function(zone) {
+    var pos = ZONE_SVG_POS[zone.id];
+    if (!pos) return;
+    var status = getZoneStatus(zone.id);
+    var fc, sc;
+    if (status.state === 'hot')    { fc = '#ef4444'; sc = '#dc2626'; }
+    else if (status.state === 'warm')  { fc = '#f59e0b'; sc = '#d97706'; }
+    else if (status.state === 'ready') { fc = '#00d68f'; sc = '#00b377'; }
+    else { fc = '#1e293b'; sc = '#334155'; }
+    svg += '<circle cx="' + pos.x + '" cy="' + pos.y + '" r="7" fill="' + fc + '" stroke="' + sc + '" stroke-width="1.5" opacity="0.9" onclick="quickLogZone(' + "'" + zone.id + "'" + ')" style="cursor:pointer;"/>';
+    if (status.state !== 'unused') {
+      var hrs = Math.round(status.hoursAgo);
+      svg += '<text x="' + pos.x + '" y="' + (pos.y + 3.5) + '" text-anchor="middle" font-size="5.5" fill="#000" font-family="Inter,sans-serif" font-weight="700" pointer-events="none">' + hrs + 'h</text>';
+    }
+  });
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+
+  var logEl = document.getElementById('t-inject-log');
+  if (!logEl) return;
+  if (!injectionLog.length) {
+    logEl.innerHTML = '<div style="font-size:13px;color:var(--text3);">No injections logged yet. Tap a zone above or use Log Site.</div>';
+    return;
+  }
+  var recent = injectionLog.slice(0,8);
+  var logHtml = '';
+  recent.forEach(function(e) {
+    var zone = INJ_ZONES.find(function(z) { return z.id === e.zone; });
+    var zoneName = zone ? zone.label : e.zone;
+    var hoursAgo = Math.round((Date.now() - e.ts) / 3600000);
+    var timeStr = hoursAgo < 1 ? 'Just now' : hoursAgo + 'h ago';
+    logHtml += '<div class="inj-log-entry"><div><div class="inj-log-zone">' + (e.peptide || 'Unknown') + '</div><div style="font-size:12px;color:var(--text2);">' + zoneName + ' · ' + (e.route || 'SubQ') + '</div></div><div class="inj-log-time">' + timeStr + '</div></div>';
+  });
+  logEl.innerHTML = logHtml;
+}
+
+function buildInjSiteGrid() {
+  var grid = document.getElementById('inj-site-grid');
+  if (!grid) return;
+  selectedInjZone = null;
+  var html = '';
+  INJ_ZONES.forEach(function(zone) {
+    var status = getZoneStatus(zone.id);
+    var cls = 'inj-zone-btn ';
+    var statusText = '';
+    if (status.state === 'hot')        { cls += 'hot';   statusText = 'Used ' + Math.round(status.hoursAgo) + 'h ago — rest needed'; }
+    else if (status.state === 'warm')  { cls += 'warm';  statusText = 'Used ' + Math.round(status.hoursAgo) + 'h ago — almost ready'; }
+    else if (status.state === 'ready') { cls += 'ready'; statusText = 'Ready to use'; }
+    else                               { cls += 'ready'; statusText = 'Never used — ready'; }
+    html += '<button class="' + cls + '" onclick="selectInjZone(' + "'" + zone.id + "'" + ')" id="izb-' + zone.id + '"><div class="inj-zone-name">' + zone.label + '</div><div class="inj-zone-status">' + statusText + '</div></button>';
+  });
+  grid.innerHTML = html;
+}
+
+function selectInjZone(zoneId) {
+  selectedInjZone = zoneId;
+  document.querySelectorAll('.inj-zone-btn').forEach(function(b) { b.style.outline = ''; });
+  var btn = document.getElementById('izb-' + zoneId);
+  if (btn) btn.style.outline = '2px solid var(--teal)';
+}
+
+function quickLogZone(zoneId) {
+  selectedInjZone = zoneId;
+  openSh('sh-inject-log');
+  setTimeout(function() { selectInjZone(zoneId); }, 80);
+}
+
+function logInjectionSite() {
+  if (!selectedInjZone) { toast('Please select an injection zone'); return; }
+  var pep = document.getElementById('inj-pep-select').value;
+  var route = document.getElementById('inj-route-select').value;
+  var zone = INJ_ZONES.find(function(z) { return z.id === selectedInjZone; });
+  var status = getZoneStatus(selectedInjZone);
+  if (status.state === 'hot') {
+    if (!confirm('Warning: ' + (zone ? zone.label : selectedInjZone) + ' was used ' + Math.round(status.hoursAgo) + 'h ago. Injecting too frequently can cause tissue damage. Continue?')) return;
+  }
+  injectionLog.unshift({zone: selectedInjZone, peptide: pep || 'Unknown', route: route, ts: Date.now()});
+  localStorage.setItem('pin_inject_log', JSON.stringify(injectionLog));
+  closeSh('sh-inject-log', null);
+  renderInjTracker();
+  toast('✓ ' + (zone ? zone.label : selectedInjZone) + ' logged');
+  selectedInjZone = null;
+}
+
+// ══════════════════════════════════════
+// CLICKABLE PEPTIDE NAMES
+// ══════════════════════════════════════
+
+var ALL_PEP_NAMES = ['BPC-157','TB-500','GHK-Cu','KPV','LL-37','Larazotide','CJC-1295','Ipamorelin','Sermorelin','GHRP-6','GHRP-2','Hexarelin','MK-677','AOD-9604','IGF-1 LR3','PEG-MGF','Follistatin 344','Semaglutide','Tirzepatide','Retatrutide','Liraglutide','MOTS-c','Humanin','Semax','Selank','Semax N-Acetyl','Selank N-Acetyl','Dihexa','Cerebrolysin','P21','Pinealon','Epithalon','Thymalin','Thymosin Alpha-1','DSIP','SS-31','PT-141','Kisspeptin-10','Oxytocin','Melanotan II','AICAR','VIP','Gonadorelin'];
+
+var PEP_REGEX_CACHE = null;
+function getPepRegex() {
+  if (PEP_REGEX_CACHE) return PEP_REGEX_CACHE;
+  var sorted = ALL_PEP_NAMES.slice().sort(function(a,b) { return b.length - a.length; });
+  var escaped = sorted.map(function(n) { return n.replace(/[-\/^$*+?.()|[\]{}]/g, '\\$&'); });
+  PEP_REGEX_CACHE = new RegExp('(' + escaped.join('|') + ')', 'g');
+  return PEP_REGEX_CACHE;
+}
+
+function linkPeptideNames(text) {
+  if (!text) return text;
+  var re = getPepRegex();
+  return text.replace(re, function(match) {
+    return '<span class="pep-chip" onclick="showPepDetailByName(\'' + match + '\')">' + match + '</span>';
+  });
+}
+
+function showPepDetailByName(name) {
+  var idx = -1;
+  for (var i = 0; i < PEPTIDES.length; i++) { if (PEPTIDES[i].name === name) { idx = i; break; } }
+  if (idx > -1) { showPepDetail(idx, name); }
+  else { toast('Research data coming soon for ' + name); }
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(){});
+}
+
+// Intercept toggleDose to count total
+var _origToggleDose = toggleDose;
+toggleDose = function(i) {
+  _origToggleDose(i);
+  if (todayLog[i]) {
+    var tot = parseInt(localStorage.getItem('pin_total_logged') || '0') + 1;
+    localStorage.setItem('pin_total_logged', tot);
+  }
+};
+
+// ALWAYS show home screen on every launch — never skip it
+// Pre-render app screens silently in background
+var _mainApp = document.getElementById('main-app');
+if (_mainApp) {
+  _mainApp.style.display = 'flex';
+  _mainApp.style.flexDirection = 'column';
+  _mainApp.style.flex = '1';
+  _mainApp.style.overflow = 'hidden';
+}
+try { renderTracking(); } catch(e) {}
+try { renderResearch(); } catch(e) {}
+try { renderStacks(); } catch(e) {}
+try { renderVendors(); } catch(e) {}
+try { renderProfile(); } catch(e) {}
+
+// Show home screen — either returning or new user mode
+if (onboarded) {
+  showHomeReturning();
+} else {
+  showHomeNew();
+}
+updateObProgress();
+</script>
+</body>
+</html>

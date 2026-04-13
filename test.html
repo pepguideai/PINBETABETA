@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0f0e0c;overflow:hidden;font-family:sans-serif;color:#f5f0e8}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;background:#0f0e0c}
+.screens{flex:1;position:relative;min-height:0}
+.screen{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;display:none;flex-direction:column;padding:20px;background:#0f0e0c}
+.screen.on{display:flex}
+.tabbar{height:60px;background:#181714;border-top:1px solid #333;display:flex;flex-shrink:0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:#666}
+.tab.on{color:#7ee8a2}
+.tab-ic{font-size:20px;margin-bottom:3px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="screens">
+    <div class="screen on" id="s-track">
+      <h2 style="color:#7ee8a2;margin-bottom:12px">✓ TRACK TAB WORKS</h2>
+      <p style="color:#a89f94">If you can see this and the tab bar below, the layout is correct.</p>
+      <div style="background:#221f1b;border-radius:12px;padding:16px;margin-top:16px">
+        <p style="color:#7ee8a2;font-weight:700">Test card content</p>
+        <p style="color:#a89f94;font-size:13px;margin-top:6px">Tap the other tabs to verify navigation works.</p>
+      </div>
+    </div>
+    <div class="screen" id="s-stack">
+      <h2 style="color:#7ee8a2;margin-bottom:12px">✓ STACK TAB WORKS</h2>
+      <p style="color:#a89f94">Stack screen is rendering correctly.</p>
+    </div>
+    <div class="screen" id="s-research">
+      <h2 style="color:#7ee8a2;margin-bottom:12px">✓ RESEARCH TAB WORKS</h2>
+      <p style="color:#a89f94">Research screen is rendering correctly.</p>
+    </div>
+    <div class="screen" id="s-vendors">
+      <h2 style="color:#7ee8a2;margin-bottom:12px">✓ VENDORS TAB WORKS</h2>
+      <p style="color:#a89f94">Vendors screen is rendering correctly.</p>
+    </div>
+    <div class="screen" id="s-profile">
+      <h2 style="color:#7ee8a2;margin-bottom:12px">✓ PROFILE TAB WORKS</h2>
+      <p style="color:#a89f94">Profile screen is rendering correctly.</p>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tab on" id="tab-track" onclick="go('track')"><div class="tab-ic">⏱️</div>Track</div>
+    <div class="tab" id="tab-stack" onclick="go('stack')"><div class="tab-ic">🧬</div>Stack</div>
+    <div class="tab" id="tab-research" onclick="go('research')"><div class="tab-ic">🔬</div>Research</div>
+    <div class="tab" id="tab-vendors" onclick="go('vendors')"><div class="tab-ic">🏪</div>Vendors</div>
+    <div class="tab" id="tab-profile" onclick="go('profile')"><div class="tab-ic">👤</div>Profile</div>
+  </div>
+</div>
+<script>
+function go(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});
+  document.getElementById('s-'+id).classList.add('on');
+  document.getElementById('tab-'+id).classList.add('on');
+}
+</script>
+</body></html>
